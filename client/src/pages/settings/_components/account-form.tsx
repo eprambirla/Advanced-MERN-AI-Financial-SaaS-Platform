@@ -17,7 +17,7 @@ import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAppDispatch, useTypedSelector } from "@/app/hook";
 import { Loader } from "lucide-react";
-import { useUpdateUserMutation } from "@/features/user/userAPI";
+import { updateUser, UpdateUserInput } from "@/lib/api/user";
 import { updateCredentials } from "@/features/auth/authSlice";
 
 const accountFormSchema = z.object({
@@ -38,8 +38,7 @@ export function AccountForm() {
 
   const [file, setFile] = useState<File | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-
-  const [updateUserMutation, { isLoading }] = useUpdateUserMutation();
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<AccountFormValues>({
     resolver: zodResolver(accountFormSchema),
@@ -49,30 +48,29 @@ export function AccountForm() {
     },
   });
 
-  const onSubmit = (values: AccountFormValues) => {
-    console.log(values);
+  const onSubmit = async (values: AccountFormValues) => {
     if (isLoading) return;
-
-    const formData = new FormData();
-    formData.append("name", values.name || "");
-    if (file) formData.append("profilePicture", file);
-
-    updateUserMutation(formData)
-      .unwrap()
-      .then((response) => {
-        dispatch(
-          updateCredentials({
-            user: {
-              profilePicture: response.data.profilePicture,
-              name: response.data.name,
-            },
-          })
-        );
-        toast.success("Account updated successfully");
-      })
-      .catch((error) => {
-        toast.error(error.data.message || "Failed to update account");
-      });
+    setIsLoading(true);
+    try {
+      const data: UpdateUserInput = {
+        name: values.name || "",
+        email: user?.email || "",
+      };
+      const response = await updateUser(data);
+      dispatch(
+        updateCredentials({
+          user: {
+            profilePicture: response.data.profilePicture,
+            name: response.data.name,
+          },
+        })
+      );
+      toast.success("Account updated successfully");
+    } catch (error) {
+      // Error handled by interceptor
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {

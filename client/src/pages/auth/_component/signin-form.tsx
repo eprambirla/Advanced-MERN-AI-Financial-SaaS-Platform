@@ -1,9 +1,9 @@
+import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
 import { AUTH_ROUTES, PROTECTED_ROUTES } from "@/routes/common/routePath";
-import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -16,16 +16,9 @@ import {
 } from "@/components/ui/form";
 import { toast } from "sonner";
 import { Loader } from "lucide-react";
-import { useLoginMutation } from "@/features/auth/authAPI";
+import { login, loginSchema, LoginInput } from "@/lib/api/auth";
 import { useAppDispatch } from "@/app/hook";
 import { setCredentials } from "@/features/auth/authSlice";
-
-const schema = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-});
-
-type FormValues = z.infer<typeof schema>;
 
 const SignInForm = ({
   className,
@@ -33,26 +26,33 @@ const SignInForm = ({
 }: React.ComponentPropsWithoutRef<"form">) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const [login, { isLoading }] = useLoginMutation();
+  const [isLoading, setIsLoading] = React.useState(false);
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(schema),
+  const form = useForm<LoginInput>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
-  const onSubmit = (values: FormValues) => {
-    login(values)
-      .unwrap()
-      .then((data) => {
-        dispatch(setCredentials(data));
-        toast.success("Login successful");
-        setTimeout(() => {
-          navigate(PROTECTED_ROUTES.OVERVIEW);
-        }, 1000);
-      })
-      .catch((error) => {
-        console.log(error);
-        toast.error(error.data?.message || "Failed to login");
-      });
+  const onSubmit = async (values: LoginInput) => {
+    setIsLoading(true);
+    try {
+      const data = await login(values);
+      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("refreshToken", data.refreshToken);
+      dispatch(setCredentials(data));
+      toast.success("Login successful");
+      setTimeout(() => {
+        navigate(PROTECTED_ROUTES.OVERVIEW);
+      }, 1000);
+    } catch (error) {
+      // Error is already handled by axios interceptor
+      // but we can add additional handling here if needed
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -69,39 +69,35 @@ const SignInForm = ({
           </p>
         </div>
         <div className="grid gap-6">
-          <div className="grid gap-2">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="!font-normal">Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="example@gmail.com"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className="grid gap-2">
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="!font-normal">Password</FormLabel>
-                  <FormControl>
-                    <Input placeholder="*******" type="password" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="!font-normal">Email</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="example@gmail.com"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="!font-normal">Password</FormLabel>
+                <FormControl>
+                  <Input placeholder="*******" type="password" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <Button disabled={isLoading} type="submit" className="w-full">
             {isLoading && <Loader className="h-4 w-4 animate-spin" />}
             Login
@@ -134,5 +130,6 @@ const SignInForm = ({
     </Form>
   );
 };
+
 
 export default SignInForm;

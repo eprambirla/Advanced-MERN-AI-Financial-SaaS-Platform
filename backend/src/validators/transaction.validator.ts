@@ -8,17 +8,17 @@ import {
 export const transactionIdSchema = z.string().trim().min(1);
 
 export const baseTransactionSchema = z.object({
-  title: z.string().min(1, "Title is required"),
+  title: z.string().min(1, "Title is required").min(2, "Title must be at least 2 characters"),
   description: z.string().optional(),
   type: z.enum([TransactionTypeEnum.INCOME, TransactionTypeEnum.EXPENSE], {
     errorMap: () => ({
-      message: "Transaction type must either INCOME or EXPENSE",
+      message: "Transaction type must be either INCOME or EXPENSE",
     }),
   }),
-  amount: z.number().positive("Amount must be postive").min(1),
+  amount: z.number().positive("Amount must be a positive number").min(1, "Amount must be at least 1"),
   category: z.string().min(1, "Category is required"),
   date: z
-    .union([z.string().datetime({ message: "Invalid date string" }), z.date()])
+    .union([z.string().datetime({ message: "Invalid date format" }), z.date()])
     .transform((val) => new Date(val)),
   isRecurring: z.boolean().default(false),
   recurringInterval: z

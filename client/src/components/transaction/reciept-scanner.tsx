@@ -3,10 +3,9 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { ScanText } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
-import { AIScanReceiptData } from "@/features/transaction/transationType";
 import { toast } from "sonner";
 import { useProgressLoader } from "@/hooks/use-progress-loader";
-import { useAiScanReceiptMutation } from "@/features/transaction/transactionAPI";
+import { scanReceipt, AIScanReceiptData } from "@/lib/api/transaction";
 
 interface ReceiptScannerProps {
   loadingChange: boolean;
@@ -29,8 +28,6 @@ const ReceiptScanner = ({
     resetProgress,
   } = useProgressLoader({ initialProgress: 10, completionDelay: 500 });
 
-  const [aiScanReceipt] = useAiScanReceiptMutation();
-
   const handleReceiptUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -48,14 +45,12 @@ const ReceiptScanner = ({
 
     startProgress(10);
     onLoadingChange(true);
-    // Simulate file upload and processing
+    
     const reader = new FileReader();
     reader.onload = (e) => {
       const result = e.target?.result as string;
       setReceipt(result);
 
-      // Simulate scanning progress
-      // Start progress
       let currentProgress = 10;
       const interval = setInterval(() => {
         const increment = currentProgress < 90 ? 10 : 1;
@@ -63,15 +58,14 @@ const ReceiptScanner = ({
         updateProgress(currentProgress);
       }, 250);
 
-      aiScanReceipt(formData)
-        .unwrap()
+      scanReceipt(formData)
         .then((res) => {
           updateProgress(100);
           onScanComplete(res.data);
           toast.success("Receipt scanned successfully");
         })
         .catch((error) => {
-          toast.error(error.data?.message || "Failed to scan receipt");
+          toast.error(error.message || "Failed to scan receipt");
         })
         .finally(() => {
           clearInterval(interval);
@@ -88,7 +82,6 @@ const ReceiptScanner = ({
     <div className="space-y-3">
       <Label className="text-sm font-medium">AI Scan Receipt</Label>
       <div className="flex items-start gap-3 border-b pb-4">
-        {/* Receipt Preview */}
         <div
           className={`h-12 w-12 rounded-md border bg-cover bg-center ${
             !receipt ? "bg-muted" : ""
@@ -102,7 +95,6 @@ const ReceiptScanner = ({
           )}
         </div>
 
-        {/* Upload Input or Progress */}
         <div className="flex-1">
           {!loadingChange ? (
             <>
