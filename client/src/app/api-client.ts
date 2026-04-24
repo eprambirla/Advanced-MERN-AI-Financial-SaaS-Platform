@@ -6,17 +6,18 @@ const baseQuery = fetchBaseQuery({
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
     const auth = (getState() as RootState).auth;
-    if (auth?.accessToken) {
-      headers.set("Authorization", `Bearer ${auth.accessToken}`);
+    const token = auth?.accessToken || localStorage.getItem("accessToken");
+    if (token) {
+      headers.set("Authorization", `Bearer ${token}`);
     }
     return headers;
   },
 });
 
 export const apiClient = createApi({
-  reducerPath: "api", // Add API client reducer to root reducer
+  reducerPath: "api",
   baseQuery: baseQuery,
-  refetchOnMountOrArgChange: true, // Refetch on mount or arg change
-  tagTypes: ["transactions", "analytics", "billingSubscription"], // Tag types for RTK Query
-  endpoints: () => ({}), // Endpoints for RTK Query
+  refetchOnMountOrArgChange: true,
+  tagTypes: ["transactions", "analytics", "billingSubscription"],
+  endpoints: () => ({}),
 });

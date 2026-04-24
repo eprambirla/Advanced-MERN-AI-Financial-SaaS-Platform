@@ -1,4 +1,4 @@
-import api from "@/lib/api";
+import apiClient from "../api-client";
 import { DateRangePreset } from "@/lib/date-range";
 
 export interface FilterParams {
@@ -7,74 +7,56 @@ export interface FilterParams {
   to?: string;
 }
 
+export interface SummaryAnalyticsData {
+  availableBalance: number;
+  totalIncome: number;
+  totalExpenses: number;
+  percentageChange: {
+    balance: number;
+    income: number;
+    expenses: number;
+  };
+  savingRate: {
+    percentage: number;
+    expenseRatio: number;
+  };
+}
+
 export interface SummaryAnalyticsResponse {
   message: string;
-  data: {
-    availableBalance: number;
-    totalIncome: number;
-    totalExpenses: number;
-    transactionCount: number;
-    savingRate: {
-      percentage: number;
-      expenseRatio: number;
-    };
-    percentageChange: {
-      income: number;
-      expenses: number;
-      balance: number;
-      prevPeriodFrom: string | null;
-      prevPeriodTo: string | null;
-    };
-    preset: {
-      from: string;
-      to: string;
-      value: string;
-      label: string;
-    };
-  };
+  data: SummaryAnalyticsData;
+}
+
+export interface ChartData {
+  date: string;
+  income: number;
+  expenses: number;
 }
 
 export interface ChartAnalyticsResponse {
   message: string;
   data: {
-    chartData: {
-      date: string;
-      income: number;
-      expenses: number;
-    }[];
-    totalIncomeCount: number;
+    chartData: ChartData[];
     totalExpenseCount: number;
-    preset: {
-      from: string;
-      to: string;
-      value: string;
-      label: string;
-    };
+    totalIncomeCount: number;
   };
+}
+
+export interface ExpensePieChartBreakdownData {
+  category: string;
+  totalAmount: number;
+  percentage: number;
 }
 
 export interface ExpensePieChartBreakdownResponse {
   message: string;
-  data: {
-    totalSpent: number;
-    breakdown: {
-      name: string;
-      value: number;
-      percentage: number;
-    }[];
-    preset: {
-      from: string;
-      to: string;
-      value: string;
-      label: string;
-    };
-  };
+  data: ExpensePieChartBreakdownData[];
 }
 
 export async function getSummaryAnalytics(
   params?: FilterParams
 ): Promise<SummaryAnalyticsResponse> {
-  const response = await api.get<SummaryAnalyticsResponse>(
+  const response = await apiClient.get<SummaryAnalyticsResponse>(
     "/analytics/summary",
     { params }
   );
@@ -84,18 +66,18 @@ export async function getSummaryAnalytics(
 export async function getChartAnalytics(
   params?: FilterParams
 ): Promise<ChartAnalyticsResponse> {
-  const response = await api.get<ChartAnalyticsResponse>(
+  const response = await apiClient.get<ChartAnalyticsResponse>(
     "/analytics/chart",
     { params }
   );
   return response.data;
 }
 
-export async function getExpensePieChart(
+export async function getExpensePieChartBreakdown(
   params?: FilterParams
 ): Promise<ExpensePieChartBreakdownResponse> {
-  const response = await api.get<ExpensePieChartBreakdownResponse>(
-    "/analytics/expense-pie-chart",
+  const response = await apiClient.get<ExpensePieChartBreakdownResponse>(
+    "/analytics/expense-breakdown",
     { params }
   );
   return response.data;

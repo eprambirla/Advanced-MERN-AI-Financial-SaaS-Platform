@@ -1,8 +1,7 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { toast } from "sonner";
-import { isTokenExpired } from "../lib/is-token-expired";
 
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api/v1";
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
 
 export class ApiError extends Error {
   constructor(
@@ -15,7 +14,7 @@ export class ApiError extends Error {
   }
 }
 
-export const api = axios.create({
+const apiClient = axios.create({
   baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json",
@@ -23,7 +22,34 @@ export const api = axios.create({
   withCredentials: true,
 });
 
-api.interceptors.request.use(
+const getErrorMessage = (status: number, data: any): string => {
+  if (data?.message) return data.message;
+  
+  switch (status) {
+    case 400:
+      return "Bad request. Please check your input and try again.";
+    case 401:
+      return "Unauthorized. Please login to continue.";
+    case 403:
+      return "Access denied. You don't have permission to perform this action.";
+    case 404:
+      return "Resource not found. The requested item does not exist.";
+    case 409:
+      return "Conflict. This resource already exists.";
+    case 422:
+      return "Validation error. Please check your input data.";
+    case 500:
+      return "Server error. Please try again later.";
+    case 502:
+      return "Bad gateway. Please try again later.";
+    case 503:
+      return "Service unavailable. Please try again later.";
+    default:
+      return "An unexpected error occurred. Please try again.";
+  }
+};
+
+apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = localStorage.getItem("accessToken");
     if (token) {
@@ -34,53 +60,54 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-api.interceptors.response.use(
+apiClient.interceptors.response.use(
   (response) => response,
-  async (error: AxiosError<{ message: string; errors?: Record<string, string[]> }>) => {
+  async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+    const status = error.response?.status;
+    const data = error.response?.data as any;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       try {
         const refreshToken = localStorage.getItem("refreshToken");
         if (refreshToken) {
-          const response = await axios.post(
+          const res = await axios.post(
             `${BASE_URL}/auth/refresh-token`,
             {},
             { withCredentials: true }
           );
 
-          const { accessToken } = response.data;
+          const { accessToken } = res.data;
           localStorage.setItem("accessToken", accessToken);
 
           originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-          return api(originalRequest);
+          return apiClient(originalRequest);
         }
       } catch (refreshError) {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         window.location.href = "/sign-in";
+        toast.error("Session expired. Please login again.");
         return Promise.reject(refreshError);
       }
     }
 
-    const message = error.response?.data?.message || error.message || "An error occurred";
-    const errors = error.response?.data?.errors;
-
+    const message = getErrorMessage(status || 500, data);
     toast.error(message);
 
     return Promise.reject(
       new ApiError(
         message,
-        error.response?.status || 500,
-        errors
+        status || 500,
+        data?.errors
       )
     );
   }
 );
 
-export function getErrorMessage(error: unknown): string {
+export function getErrorMessageFn(error: unknown): string {
   if (error instanceof ApiError) {
     return error.message;
   }
@@ -101,4 +128,4 @@ export function getValidationErrors(error: unknown): Record<string, string> {
   return {};
 }
 
-export default api;
+export default apiClient;

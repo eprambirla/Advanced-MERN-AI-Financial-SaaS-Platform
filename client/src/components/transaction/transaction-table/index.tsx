@@ -51,7 +51,6 @@ const TransactionTable = (props: {
   };
 
   const handleSearch = (value: string) => {
-    console.log(debouncedTerm);
     setSearchTerm(value);
   };
 
@@ -85,8 +84,8 @@ const TransactionTable = (props: {
 
   return (
     <DataTable
-      data={transactions} //transactions
-      columns={transactionColumns}
+      data={transactions as any[]}
+      columns={transactionColumns as any[]}
       searchPlaceholder="Search transactions..."
       isLoading={isFetching}
       isBulkDeleting={isBulkDeleting}

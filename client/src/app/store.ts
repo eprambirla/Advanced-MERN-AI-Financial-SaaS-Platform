@@ -12,30 +12,20 @@ import {
   REGISTER,
 } from "redux-persist";
 import { apiClient } from "./api-client";
-//import { encryptTransform } from 'redux-persist-transform-encrypt';
 
 type RootReducerType = ReturnType<typeof rootReducer>;
 
 const persistConfig = {
-  key: "root", // Key for the persisted data in storage
-  storage, // Storage engine to use (localStorage)
-  blacklist: [apiClient.reducerPath], // Specify which reducers not to persist (RTK Query cache)
-  // transforms: [
-  //     encryptTransform({
-  //       secretKey: import.meta.env.VITE_REDUX_PERSIST_SECRET_KEY!,
-  //       onError: function (error) {
-  //         console.error('Encryption error:', error);
-  //       },
-  //     }),
-  //   ],
+  key: "root",
+  storage,
+  blacklist: [apiClient.reducerPath],
 };
 
 const rootReducer = combineReducers({
-  [apiClient.reducerPath]: apiClient.reducer, // Add API client reducer to root reducer
-  auth: authReducer, // Add auth reducer to root reducer
+  [apiClient.reducerPath]: apiClient.reducer,
+  auth: authReducer,
 });
 
-// Create a persisted version of the root reducer
 const persistedReducer = persistReducer<RootReducerType>(
   persistConfig,
   rootReducer
@@ -48,11 +38,11 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: reduxPersistActions, /// Ignore specific actions in serializable checks
+        ignoredActions: reduxPersistActions,
       },
     }).concat(apiClient.middleware),
 });
 
-export const persistor = persistStore(store); // Create a persistor linked to the store
+export const persistor = persistStore(store);
 
 export type RootState = ReturnType<typeof store.getState>;

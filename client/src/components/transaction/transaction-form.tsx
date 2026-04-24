@@ -41,11 +41,10 @@ import { Switch } from "../ui/switch";
 import CurrencyInputField from "../ui/currency-input";
 import { SingleSelector } from "../ui/single-select";
 import {
-  createTransaction,
-  getTransactionById,
-  updateTransaction as updateTransactionApi,
-  CreateTransactionInput,
-} from "@/lib/api/transaction";
+  useCreateTransactionMutation,
+  useGetSingleTransactionQuery,
+  useUpdateTransactionMutation,
+} from "@/features/transaction/transactionAPI";
 import { toast } from "sonner";
 
 const formSchema = z.object({
@@ -85,24 +84,21 @@ const TransactionForm = (props: {
   const { onCloseDrawer, isEdit = false, transactionId } = props;
 
   const [isScanning, setIsScanning] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [editData, setEditData] = useState<any>(null);
 
-  useEffect(() => {
-    if (isEdit && transactionId) {
-      setIsLoading(true);
-      getTransactionById(transactionId)
-        .then((res) => {
-          setEditData(res.transaction);
-        })
-        .catch(() => {
-          toast.error("Failed to load transaction");
-        })
-        .finally(() => setIsLoading(false));
-    }
-  }, [isEdit, transactionId]);
+  const [createTransaction] = useCreateTransactionMutation();
+  const [updateTransaction] = useUpdateTransactionMutation();
 
-  const [isSaving, setIsSaving] = useState(false);
+  const { data: transactionData } = useGetSingleTransactionQuery(
+    transactionId || "",
+    { skip: !isEdit || !transactionId }
+  );
+
+  useEffect(() => {
+    if (isEdit && transactionData) {
+      setEditData(transactionData.transaction);
+    }
+  }, [isEdit, transactionData]);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -160,22 +156,21 @@ const TransactionForm = (props: {
   };
 
   const onSubmit = async (values: FormValues) => {
-    setIsSaving(true);
-    try {
-      const payload: CreateTransactionInput = {
-        title: values.title,
-        type: values.type,
-        category: values.category,
-        paymentMethod: values.paymentMethod as any,
-        description: values.description || "",
-        amount: Number(values.amount),
-        date: values.date.toISOString(),
-        isRecurring: values.isRecurring || false,
-        recurringInterval: values.frequency || null,
-      };
+    const payload: any = {
+      title: values.title,
+      type: values.type,
+      category: values.category,
+      paymentMethod: values.paymentMethod,
+      description: values.description || "",
+      amount: Number(values.amount),
+      date: values.date.toISOString(),
+      isRecurring: values.isRecurring || false,
+      recurringInterval: values.frequency || null,
+    };
 
+    try {
       if (isEdit && transactionId) {
-        await updateTransactionApi(transactionId, payload);
+        await updateTransaction({ id: transactionId, transaction: payload });
         toast.success("Transaction updated successfully");
       } else {
         await createTransaction(payload);
@@ -185,8 +180,6 @@ const TransactionForm = (props: {
       onCloseDrawer?.();
     } catch (error) {
       // Error handled by interceptor
-    } finally {
-      setIsSaving(false);
     }
   };
 
@@ -491,18 +484,12 @@ const TransactionForm = (props: {
             <Button
               type="submit"
               className="w-full !text-white"
-              disabled={isScanning || isSaving}
+              disabled={isScanning}
             >
-              {isSaving && <Loader className="h-4 w-4 animate-spin" />}
+              <Loader className={cn("h-4 w-4 animate-spin mr-2", !form.formState.isSubmitting && "hidden")} />
               {isEdit ? "Update" : "Save"}
             </Button>
           </div>
-
-          {isLoading && (
-            <div className="absolute top-0 left-0 right-0 bottom-0 bg-white/70 dark:bg-background/70 z-50 flex justify-center">
-              <Loader className="h-8 w-8 animate-spin" />
-            </div>
-          )}
         </form>
       </Form>
     </div>

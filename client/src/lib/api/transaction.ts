@@ -1,5 +1,5 @@
 import { z } from "zod";
-import api from "@/lib/api";
+import apiClient from "../api-client";
 import {
   _TRANSACTION_FREQUENCY,
   _TransactionType,
@@ -102,7 +102,7 @@ export interface AIScanReceiptResponse {
 export async function createTransaction(
   data: CreateTransactionInput
 ): Promise<{ message: string; transaction: Transaction }> {
-  const response = await api.post<{
+  const response = await apiClient.post<{
     message: string;
     transaction: Transaction;
   }>("/transaction/create", data);
@@ -112,7 +112,7 @@ export async function createTransaction(
 export async function getAllTransactions(
   params?: GetAllTransactionsParams
 ): Promise<TransactionsResponse> {
-  const response = await api.get<TransactionsResponse>("/transaction/all", {
+  const response = await apiClient.get<TransactionsResponse>("/transaction/all", {
     params,
   });
   return response.data;
@@ -121,7 +121,7 @@ export async function getAllTransactions(
 export async function getTransactionById(
   id: string
 ): Promise<TransactionResponse> {
-  const response = await api.get<TransactionResponse>(`/transaction/${id}`);
+  const response = await apiClient.get<TransactionResponse>(`/transaction/${id}`);
   return response.data;
 }
 
@@ -129,21 +129,21 @@ export async function updateTransaction(
   id: string,
   data: UpdateTransactionInput
 ): Promise<{ message: string }> {
-  const response = await api.put<{ message: string }>(`/transaction/update/${id}`, data);
+  const response = await apiClient.put<{ message: string }>(`/transaction/update/${id}`, data);
   return response.data;
 }
 
 export async function deleteTransaction(
   id: string
 ): Promise<{ message: string }> {
-  const response = await api.delete<{ message: string }>(`/transaction/delete/${id}`);
+  const response = await apiClient.delete<{ message: string }>(`/transaction/delete/${id}`);
   return response.data;
 }
 
 export async function duplicateTransaction(
   id: string
 ): Promise<{ message: string; data: Transaction }> {
-  const response = await api.put<{ message: string; data: Transaction }>(
+  const response = await apiClient.put<{ message: string; data: Transaction }>(
     `/transaction/duplicate/${id}`
   );
   return response.data;
@@ -152,7 +152,7 @@ export async function duplicateTransaction(
 export async function scanReceipt(
   formData: FormData
 ): Promise<AIScanReceiptResponse> {
-  const response = await api.post<AIScanReceiptResponse>(
+  const response = await apiClient.post<AIScanReceiptResponse>(
     "/transaction/scan-receipt",
     formData,
     {
@@ -167,7 +167,7 @@ export async function scanReceipt(
 export async function bulkCreateTransactions(
   transactions: CreateTransactionInput[]
 ): Promise<{ message: string; insertedCount: number }> {
-  const response = await api.post<{ message: string; insertedCount: number }>(
+  const response = await apiClient.post<{ message: string; insertedCount: number }>(
     "/transaction/bulk-transaction",
     { transactions }
   );
@@ -177,7 +177,7 @@ export async function bulkCreateTransactions(
 export async function bulkDeleteTransactions(
   transactionIds: string[]
 ): Promise<{ message: string; deletedCount: number }> {
-  const response = await api.delete<{ message: string; deletedCount: number }>(
+  const response = await apiClient.delete<{ message: string; deletedCount: number }>(
     "/transaction/bulk-delete",
     { data: { transactionIds } }
   );

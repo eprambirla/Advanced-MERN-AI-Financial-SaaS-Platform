@@ -15,8 +15,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useAppDispatch, useTypedSelector } from "@/app/hook";
 import { Loader } from "lucide-react";
+import { useAppDispatch, useTypedSelector } from "@/app/hook";
 import { updateUser, UpdateUserInput } from "@/lib/api/user";
 import { updateCredentials } from "@/features/auth/authSlice";
 
@@ -35,8 +35,6 @@ type AccountFormValues = z.infer<typeof accountFormSchema>;
 export function AccountForm() {
   const dispatch = useAppDispatch();
   const { user } = useTypedSelector((state) => state.auth);
-
-  const [file, setFile] = useState<File | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -83,7 +81,6 @@ export function AccountForm() {
       toast.error("Please select an image file");
       return;
     }
-    setFile(file);
     const reader = new FileReader();
     reader.onload = (e) => {
       const result = e.target?.result as string;
@@ -95,37 +92,51 @@ export function AccountForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <div className="flex flex-col items-start space-y-4">
-          <FormLabel>Profile Picture</FormLabel>
-          <div className="flex items-center gap-4">
-            <Avatar className="h-20 w-20">
-              <AvatarImage
-                src={avatarUrl || user?.profilePicture || ""}
-                className="!object-cover !object-center"
-              />
+        <div className="flex flex-col items-center gap-4">
+          <div className="relative">
+            <Avatar className="h-24 w-24 cursor-pointer overflow-visible">
+              <AvatarImage src={avatarUrl || user?.profilePicture || ""} />
               <AvatarFallback className="text-2xl">
-                {form.watch("name")?.charAt(0)?.toUpperCase() || "U"}
+                {user?.name?.charAt(0).toUpperCase() || "U"}
               </AvatarFallback>
             </Avatar>
-            <div className="flex flex-col gap-2">
-              <Input
+            <label
+              htmlFor="avatar-upload"
+              className="absolute bottom-0 right-0 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-xl hover:bg-primary/90"
+            >
+              <input
+                id="avatar-upload"
                 type="file"
                 accept="image/*"
+                className="hidden"
                 onChange={handleAvatarChange}
-                className="max-w-[250px]"
               />
-              <p className="text-xs text-muted-foreground">
-                Recommended: Square JPG, PNG, at least 300x300px.
-              </p>
-            </div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+                className="h-4 w-4"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75a2.25 2.25 0 11-4.5 0V14a2.25 2.25 0 014.5 0z"
+                />
+              </svg>
+            </label>
           </div>
+          <p className="text-sm text-muted-foreground">
+            Click the camera icon to change your avatar
+          </p>
         </div>
         <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel className="!font-normal">Name</FormLabel>
               <FormControl>
                 <Input placeholder="Your name" {...field} />
               </FormControl>
@@ -133,10 +144,12 @@ export function AccountForm() {
             </FormItem>
           )}
         />
-        <Button disabled={isLoading} type="submit">
-          {isLoading && <Loader className="h-4 w-4 animate-spin" />}
-          Update account
-        </Button>
+        <div className="flex justify-end">
+          <Button type="submit" disabled={isLoading} className="!text-white">
+            {isLoading && <Loader className="mr-2 h-4 w-4 animate-spin" />}
+            Save Changes
+          </Button>
+        </div>
       </form>
     </Form>
   );

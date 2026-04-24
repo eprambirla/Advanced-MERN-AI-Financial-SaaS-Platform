@@ -49,7 +49,6 @@ const SignInForm = ({
       }, 1000);
     } catch (error) {
       // Error is already handled by axios interceptor
-      // but we can add additional handling here if needed
     } finally {
       setIsLoading(false);
     }
@@ -76,10 +75,7 @@ const SignInForm = ({
               <FormItem>
                 <FormLabel className="!font-normal">Email</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="example@gmail.com"
-                    {...field}
-                  />
+                  <Input placeholder="example@gmail.com" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -119,10 +115,7 @@ const SignInForm = ({
         </div>
         <div className="text-center text-sm">
           Don&apos;t have an account?{" "}
-          <Link
-            to={AUTH_ROUTES.SIGN_UP}
-            className="underline underline-offset-4"
-          >
+          <Link to={AUTH_ROUTES.SIGN_UP} className="underline underline-offset-4">
             Sign up
           </Link>
         </div>
@@ -130,6 +123,5 @@ const SignInForm = ({
     </Form>
   );
 };
-
 
 export default SignInForm;
