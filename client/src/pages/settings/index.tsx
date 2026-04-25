@@ -1,9 +1,10 @@
-import PageLayout from "@/components/page-layout";
+import PageHeader from "@/components/page-header";
 import { buttonVariants } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { PROTECTED_ROUTES } from "@/routes/common/routePath";
 import { Link, Outlet, useLocation } from "react-router-dom";
+import { useSidebarContext } from "@/components/sidebar";
+
 interface ItemPropsType {
   items: {
     title: string;
@@ -12,34 +13,31 @@ interface ItemPropsType {
 }
 
 const Settings = () => {
+  const { openSidebar } = useSidebarContext();
   const sidebarNavItems = [
     { title: "Account", href: PROTECTED_ROUTES.SETTINGS },
     { title: "Appearance", href: PROTECTED_ROUTES.SETTINGS_APPEARANCE },
     { title: "Billings", href: PROTECTED_ROUTES.SETTINGS_BILLING },
   ];
+
   return (
-    <PageLayout
-      title="Settings"
-      subtitle="Manage your account settings and set e-mail preferences."
-      addMarginTop
-    >
-      <Card className="border shadow-none">
-        <CardContent>
-          <div
-            className="flex flex-col space-y-8 lg:flex-row lg:space-x-12
-         lg:space-y-0 pb-10 pt-2"
-          >
-            <aside className="mr-4 lg:w-1/5">
-              <SidebarNav items={sidebarNavItems} />
-            </aside>
-            {/* <Separator orientation="vertical" className=" !h-[500px] !border-gray-200" /> */}
-            <div className="flex-1 lg:max-w-2xl">
-              <Outlet />
-            </div>
+    <div className="min-h-screen flex flex-col">
+      <PageHeader
+        title="Settings"
+        subtitle="Manage your account settings and set e-mail preferences."
+        onMenuClick={openSidebar}
+      />
+      <div className="flex-1 w-full max-w-[var(--max-width)] mx-auto px-4 lg:px-0 py-6">
+        <div className="flex flex-col lg:flex-row gap-6">
+          <aside className="lg:w-1/5">
+            <SidebarNav items={sidebarNavItems} />
+          </aside>
+          <div className="flex-1 lg:max-w-2xl">
+            <Outlet />
           </div>
-        </CardContent>
-      </Card>
-    </PageLayout>
+        </div>
+      </div>
+    </div>
   );
 };
 

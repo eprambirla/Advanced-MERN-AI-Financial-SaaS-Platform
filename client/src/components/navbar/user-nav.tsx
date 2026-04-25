@@ -1,4 +1,4 @@
-import { ChevronDown, LogOut } from "lucide-react"
+import { LogOut } from "lucide-react"
 import {
     Avatar,
     AvatarFallback,
@@ -14,24 +14,30 @@ import {
     DropdownMenuSeparator,
         DropdownMenuTrigger,
   } from "../ui/dropdown-menu"
+  import { cn } from "@/lib/utils"
   
 export function UserNav({
   userName,
   profilePicture,
   onLogout,
+  showName,
 }: {
   userName: string;
   profilePicture: string;
   onLogout: () => void;
+  showName?: boolean;
 }) {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="relative !bg-transparent h-8 w-8 rounded-full !gap-0"
+          className={cn(
+            "relative !bg-transparent h-8 rounded-lg !gap-2 hover:!bg-gray-100 dark:hover:!bg-gray-800",
+            showName ? "w-full justify-start px-2" : "!w-auto !rounded-full !px-0"
+          )}
         >
-          <Avatar className="h-10 w-10 !cursor-pointer ">
+          <Avatar className={cn("h-10 w-10 !cursor-pointer", showName && "h-8 w-8")}>
             <AvatarImage
               src={profilePicture || ""}
               className="!cursor-pointer "
@@ -43,7 +49,13 @@ export function UserNav({
               {userName.charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>
-          <ChevronDown className="!w-3 !h-3 ml-1 text-white" />
+          {showName && (
+            <div className="flex flex-col items-start flex-1 min-w-0">
+              <span className="text-sm font-medium truncate text-gray-900 dark:text-gray-100">
+                {userName}
+              </span>
+            </div>
+          )}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
