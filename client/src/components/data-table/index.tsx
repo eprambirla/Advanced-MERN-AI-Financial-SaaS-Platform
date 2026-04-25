@@ -33,6 +33,7 @@ import { cn } from "@/lib/utils";
 import TableSkeleton from "./table-skeleton-loader";
 import { DataTablePagination } from "./table-pagination";
 import { EmptyState } from "../empty-state";
+import { useIsMobile } from "@/hooks/useDevice";
 
 interface ColumnMeta {
   mobileHidden?: boolean;
@@ -67,22 +68,6 @@ interface DataTableProps<TData> {
   };
   onPageChange?: (pageNumber: number) => void;
   onPageSizeChange?: (pageSize: number) => void;
-}
-
-function useIsMobile(breakpoint: number = 768) {
-  const [isMobile, setIsMobile] = React.useState(false);
-
-  React.useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < breakpoint);
-    };
-
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, [breakpoint]);
-
-  return isMobile;
 }
 
 export function DataTable<TData>({
@@ -234,7 +219,6 @@ export function DataTable<TData>({
                 <MobileRow
                   key={row.id}
                   row={row}
-                  columns={visibleColumns as ColumnDef<TData, any>[]}
                   onToggleSelect={() => row.toggleSelected()}
                   isSelected={row.getIsSelected()}
                 />
@@ -402,14 +386,12 @@ export function DataTable<TData>({
   );
 }
 
-function MobileRow<TData>({
+function MobileRow({
   row,
-  columns,
   onToggleSelect,
   isSelected,
 }: {
   row: any;
-  columns: ColumnDef<TData, any>[];
   onToggleSelect: () => void;
   isSelected: boolean;
 }) {

@@ -63,7 +63,7 @@ const budgetSchema = z.object({
   category: z.string().min(1, "Category is required"),
   amount: z.number().min(1, "Amount must be greater than 0"),
   period: z.enum(["WEEKLY", "MONTHLY", "YEARLY"]),
-  alertThreshold: z.number().min(0).max(100).default(80),
+  alertThreshold: z.number().min(0).max(100),
 });
 
 type BudgetFormData = z.infer<typeof budgetSchema>;
@@ -71,7 +71,7 @@ type BudgetFormData = z.infer<typeof budgetSchema>;
 export default function Budgets() {
   const { openSidebar } = useSidebarContext();
   const { data, isLoading } = useGetBudgetsQuery();
-  const budgets: Budget[] = data?.data || data || [];
+  const budgets: Budget[] = data || [];
   const [deleteBudget, { isLoading: isDeleting }] = useDeleteBudgetMutation();
   const [createBudget, { isLoading: isCreating }] = useCreateBudgetMutation();
   const [updateBudget, { isLoading: isUpdating }] = useUpdateBudgetMutation();
@@ -129,7 +129,7 @@ export default function Budgets() {
     form.reset();
   };
 
-  const onSubmit = async (formData: BudgetFormData) => {
+  const onSubmit = form.handleSubmit(async (formData) => {
     try {
       if (editingBudget) {
         await toast.promise(
@@ -154,7 +154,7 @@ export default function Budgets() {
     } catch (error) {
       // Error is handled by toast
     }
-  };
+  });
 
   const totalBudget = budgets.reduce((sum, b) => sum + b.amount, 0);
   const totalSpent = budgets.reduce((sum, b) => sum + (b.spent || 0), 0);
@@ -193,7 +193,7 @@ export default function Budgets() {
                         {editingBudget ? "Edit Budget" : "Create New Budget"}
                       </DialogTitle>
                     </DialogHeader>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <form onSubmit={onSubmit} className="space-y-4">
                       <div className="space-y-2">
                         <Label htmlFor="category">Category</Label>
                         <Select

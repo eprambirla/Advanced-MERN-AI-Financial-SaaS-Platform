@@ -64,7 +64,7 @@ const DashboardDataChart: React.FC<PropsType> = (props) => {
           <p className="text-sm text-muted-foreground mt-1">Showing total transactions {dateRange?.label}</p>
         </div>
         <div className="flex gap-4 mt-4 sm:mt-0">
-          {TRANSACTION_TYPES.map((key, index) => {
+          {TRANSACTION_TYPES.map((key) => {
             const chart = key as keyof typeof chartConfig;
             return (
               <div

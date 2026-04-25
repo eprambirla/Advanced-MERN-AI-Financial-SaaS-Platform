@@ -1,5 +1,11 @@
 import { toast as sonnerToast } from "sonner";
-import { ApiError } from "@/types/api";
+
+interface ApiError {
+  data?: {
+    message?: string;
+  };
+  message?: string;
+}
 
 interface ToastOptions {
   loading?: string;
@@ -14,7 +20,7 @@ export const useToast = () => {
   ) => {
     return sonnerToast.promise(promise, {
       loading: options.loading || "Loading...",
-      success: (data) => options.success || "Success!",
+      success: () => options.success || "Success!",
       error: (error: ApiError) => {
         if (typeof options.error === "function") {
           return options.error(error);
