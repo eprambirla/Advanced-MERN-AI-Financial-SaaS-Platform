@@ -4,6 +4,7 @@ import TransactionModel, {
 } from "../models/transaction.model";
 import { BadRequestException, NotFoundException } from "../utils/app-error";
 import { calculateNextOccurrence } from "../utils/helper";
+import { convertToDollarUnit } from "../utils/format-currency";
 import {
   CreateTransactionType,
   UpdateTransactionType,
@@ -100,6 +101,7 @@ export const getAllTransactionService = async (
   const transactionsWithId = transations.map((t: any) => ({
     ...t,
     id: t._id.toString(),
+    amount: convertToDollarUnit(t.amount),
   }));
 
   const totalPages = Math.ceil(totalCount / pageSize);
@@ -129,6 +131,7 @@ export const getTransactionByIdService = async (
   return {
     ...transaction.toObject(),
     id: transaction._id.toString(),
+    amount: convertToDollarUnit(transaction.amount),
   };
 };
 
@@ -160,6 +163,7 @@ const duplicated = await TransactionModel.create({
   return {
     ...duplicated.toObject(),
     id: duplicated._id.toString(),
+    amount: convertToDollarUnit(duplicated.amount),
   };
 };
 
