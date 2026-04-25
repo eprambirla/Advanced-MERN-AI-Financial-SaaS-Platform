@@ -30,6 +30,11 @@ passport.use(
         return done(null, false);
       }
 
+      console.log("=== PASSPORT JWT ===");
+      console.log("user:", user);
+      console.log("user._id:", user._id);
+      console.log("user.id:", user.id);
+
       return done(null, user);
     } catch (error) {
       return done(error, false);

@@ -1,17 +1,13 @@
 import { Request, Response } from "express";
 import { asyncHandler } from "../middlewares/asyncHandler.middlerware";
 import { HTTPSTATUS } from "../config/http.config";
+import { summaryAnalyticsService, chartAnalyticsService, expensePieChartBreakdownService } from "../services/analytics.service";
 import { DateRangePreset } from "../enums/date-range.enum";
-import {
-  chartAnalyticsService,
-  expensePieChartBreakdownService,
-  summaryAnalyticsService,
-} from "../services/analytics.service";
 
 export const summaryAnalyticsController = asyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?._id;
-
+    const user = req.user as any;
+    const userId = user?._id || user?.id;
     const { preset, from, to } = req.query;
 
     const filter = {
@@ -35,7 +31,8 @@ export const summaryAnalyticsController = asyncHandler(
 
 export const chartAnalyticsController = asyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?._id;
+    const user = req.user as any;
+    const userId = user?._id || user?.id;
     const { preset, from, to } = req.query;
 
     const filter = {
@@ -52,15 +49,42 @@ export const chartAnalyticsController = asyncHandler(
     );
 
     return res.status(HTTPSTATUS.OK).json({
-      message: "Chart fetched successfully",
+      message: "Chart data fetched successfully",
       data: chartData,
+    });
+  }
+);
+
+export const categoryAnalyticsController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const user = req.user as any;
+    const userId = user?._id || user?.id;
+    const { preset, from, to } = req.query;
+
+    const filter = {
+      dateRangePreset: preset as DateRangePreset,
+      customFrom: from ? new Date(from as string) : undefined,
+      customTo: to ? new Date(to as string) : undefined,
+    };
+
+    const categoryData = await summaryAnalyticsService(
+      userId,
+      filter.dateRangePreset,
+      filter.customFrom,
+      filter.customTo
+    );
+
+    return res.status(HTTPSTATUS.OK).json({
+      message: "Category data fetched successfully",
+      data: categoryData,
     });
   }
 );
 
 export const expensePieChartBreakdownController = asyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?._id;
+    const user = req.user as any;
+    const userId = user?._id || user?.id;
     const { preset, from, to } = req.query;
 
     const filter = {

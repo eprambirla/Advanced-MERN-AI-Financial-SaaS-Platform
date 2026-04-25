@@ -12,6 +12,7 @@ export const isAuthRoute = (pathname: string): boolean => {
     TRANSACTIONS: "/transactions",
     REPORTS: "/reports",
     BUDGETS: "/budgets",
+    SAVINGS_TARGETS: "/savings-targets",
     SETTINGS: "/settings",
     SETTINGS_APPEARANCE: "/settings/appearance",
     SETTINGS_BILLING: "/settings/billing",

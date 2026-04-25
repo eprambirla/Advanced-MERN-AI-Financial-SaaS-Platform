@@ -24,7 +24,8 @@ import { TransactionTypeEnum } from "../models/transaction.model";
 export const createTransactionController = asyncHandler(
   async (req: Request, res: Response) => {
     const body = createTransactionSchema.parse(req.body);
-    const userId = req.user?._id;
+    const user = req.user as any;
+    const userId = user?._id || user?.id;
 
     const transaction = await createTransactionService(body, userId);
 
@@ -37,7 +38,8 @@ export const createTransactionController = asyncHandler(
 
 export const getAllTransactionController = asyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?._id;
+    const user = req.user as any;
+    const userId = user?._id || user?.id;
 
     const filters = {
       keyword: req.query.keyword as string | undefined,

@@ -7,7 +7,8 @@ import TransactionModel from "../models/transaction.model";
 export const createBudget = asyncHandler(
   async (req: Request, res: Response) => {
     const { category, amount, period, startDate, alertThreshold } = req.body;
-    const userId = req.user?._id;
+    const user = req.user as any;
+    const userId = user?._id || user?.id;
 
     const existingBudget = await BudgetModel.findOne({
       userId,
@@ -40,7 +41,8 @@ export const createBudget = asyncHandler(
 
 export const getBudgets = asyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?._id;
+    const user = req.user as any;
+    const userId = user?._id || user?.id;
 
     const budgets = await BudgetModel.find({ userId });
 
@@ -67,7 +69,8 @@ export const getBudgets = asyncHandler(
 
 export const getBudgetById = asyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?._id;
+    const user = req.user as any;
+    const userId = user?._id || user?.id;
     const budget = await BudgetModel.findOne({
       _id: req.params.id,
       userId,
@@ -98,7 +101,8 @@ export const getBudgetById = asyncHandler(
 
 export const updateBudget = asyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?._id;
+    const user = req.user as any;
+    const userId = user?._id || user?.id;
     const { category, amount, period, startDate, alertThreshold } = req.body;
 
     const budget = await BudgetModel.findOneAndUpdate(
@@ -123,7 +127,8 @@ export const updateBudget = asyncHandler(
 
 export const deleteBudget = asyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?._id;
+    const user = req.user as any;
+    const userId = user?._id || user?.id;
 
     const budget = await BudgetModel.findOneAndDelete({
       _id: req.params.id,

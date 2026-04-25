@@ -6,6 +6,7 @@ import {
   Settings, 
   X,
   Wallet,
+  PiggyBank,
 } from "lucide-react";
 import { PROTECTED_ROUTES } from "@/routes/common/routePath";
 import { cn } from "@/lib/utils";
@@ -30,6 +31,7 @@ const SidebarContent = ({ children }: { children: React.ReactNode }) => {
     { href: PROTECTED_ROUTES.OVERVIEW, label: "Overview", icon: LayoutDashboard },
     { href: PROTECTED_ROUTES.TRANSACTIONS, label: "Transactions", icon: ArrowLeftRight },
     { href: PROTECTED_ROUTES.BUDGETS, label: "Budgets", icon: Wallet },
+    { href: PROTECTED_ROUTES.SAVINGS_TARGETS, label: "Savings", icon: PiggyBank },
     { href: PROTECTED_ROUTES.REPORTS, label: "Reports", icon: FileText },
     { href: PROTECTED_ROUTES.SETTINGS, label: "Settings", icon: Settings },
   ];

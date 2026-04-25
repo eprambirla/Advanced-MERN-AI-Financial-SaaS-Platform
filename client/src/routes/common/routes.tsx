@@ -5,6 +5,7 @@ import Dashboard from "@/pages/dashboard";
 import Transactions from "@/pages/transactions";
 import Reports from "@/pages/reports";
 import Budgets from "@/pages/budgets";
+import SavingsTargets from "@/pages/savings-targets";
 import Settings from "@/pages/settings";
 import Account from "@/pages/settings/account";
 import Appearance from "@/pages/settings/appearance";
@@ -20,6 +21,7 @@ export const protectedRoutePaths = [
   { path: PROTECTED_ROUTES.TRANSACTIONS, element: <Transactions /> },
   { path: PROTECTED_ROUTES.REPORTS, element: <Reports /> },
   { path: PROTECTED_ROUTES.BUDGETS, element: <Budgets /> },
+  { path: PROTECTED_ROUTES.SAVINGS_TARGETS, element: <SavingsTargets /> },
   { path: PROTECTED_ROUTES.SETTINGS, 
     element: <Settings /> ,
     children: [
