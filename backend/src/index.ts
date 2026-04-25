@@ -17,6 +17,7 @@ import { initializeCrons } from "./cron";
 import reportRoutes from "./routes/report.route";
 import { getDateRange } from "./utils/date";
 import analyticsRoutes from "./routes/analytics.route";
+import budgetRoutes from "./routes/budget.route";
 
 const app = express();
 const BASE_PATH = Env.BASE_PATH;
@@ -58,6 +59,7 @@ app.use(`${BASE_PATH}/user`, passportAuthenticateJwt, userRoutes);
 app.use(`${BASE_PATH}/transaction`, passportAuthenticateJwt, transactionRoutes);
 app.use(`${BASE_PATH}/report`, passportAuthenticateJwt, reportRoutes);
 app.use(`${BASE_PATH}/analytics`, passportAuthenticateJwt, analyticsRoutes);
+app.use(`${BASE_PATH}/budget`, passportAuthenticateJwt, budgetRoutes);
 
 app.use(errorHandler);
 

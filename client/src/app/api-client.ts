@@ -18,6 +18,6 @@ export const apiClient = createApi({
   reducerPath: "api",
   baseQuery: baseQuery,
   refetchOnMountOrArgChange: true,
-  tagTypes: ["transactions", "analytics", "billingSubscription"],
+  tagTypes: ["transactions", "analytics", "billingSubscription", "Budget"],
   endpoints: () => ({}),
 });

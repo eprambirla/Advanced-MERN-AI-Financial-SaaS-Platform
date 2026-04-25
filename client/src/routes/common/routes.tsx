@@ -4,6 +4,7 @@ import SignUp from "@/pages/auth/sign-up";
 import Dashboard from "@/pages/dashboard";
 import Transactions from "@/pages/transactions";
 import Reports from "@/pages/reports";
+import Budgets from "@/pages/budgets";
 import Settings from "@/pages/settings";
 import Account from "@/pages/settings/account";
 import Appearance from "@/pages/settings/appearance";
@@ -18,10 +19,11 @@ export const protectedRoutePaths = [
   { path: PROTECTED_ROUTES.OVERVIEW, element: <Dashboard /> },
   { path: PROTECTED_ROUTES.TRANSACTIONS, element: <Transactions /> },
   { path: PROTECTED_ROUTES.REPORTS, element: <Reports /> },
+  { path: PROTECTED_ROUTES.BUDGETS, element: <Budgets /> },
   { path: PROTECTED_ROUTES.SETTINGS, 
     element: <Settings /> ,
     children: [
-      { index: true, element: <Account /> }, // Default route
+      { index: true, element: <Account /> },
       { path: PROTECTED_ROUTES.SETTINGS, element: <Account /> },
       { path: PROTECTED_ROUTES.SETTINGS_APPEARANCE, element: <Appearance /> },
       { path: PROTECTED_ROUTES.SETTINGS_BILLING, element: <Billing /> },
