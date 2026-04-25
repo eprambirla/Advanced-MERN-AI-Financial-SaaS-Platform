@@ -196,7 +196,7 @@ export function DataTable<TData>({
         {(selection && hasSelections) || isBulkDeleting ? (
           <Button
             disabled={isLoading || isBulkDeleting}
-            variant="destructive"
+            variant="errorOutline"
             size="sm"
             onClick={handleDelete}
           >

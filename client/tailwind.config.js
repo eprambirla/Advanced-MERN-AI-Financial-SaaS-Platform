@@ -45,7 +45,7 @@ export default {
           foreground: "var(--accent-foreground)",
         },
 
-        /* States */
+/* States */
         destructive: {
           DEFAULT: "var(--destructive)",
           foreground: "var(--destructive-foreground)",
@@ -82,6 +82,24 @@ export default {
           expense: "var(--chart-expense)",
           savings: "var(--chart-savings)",
         },
+      },
+
+      backgroundColor: {
+        error: "var(--error)",
+        warning: "var(--warning)",
+        success: "var(--success)",
+      },
+
+      borderColor: {
+        error: "var(--error)",
+        warning: "var(--warning)",
+        success: "var(--success)",
+      },
+
+      textColor: {
+        error: "var(--error)",
+        warning: "var(--warning)",
+        success: "var(--success)",
       },
 
       boxShadow: {
