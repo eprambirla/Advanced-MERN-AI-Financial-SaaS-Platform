@@ -117,7 +117,7 @@ const ColumnMappingStep = ({
         </DialogDescription>
       </DialogHeader>
 
-      <div className="border rounded-md overflow-y-auto">
+      <div className="border rounded-md max-h-[300px] overflow-y-auto">
         <Table>
           <TableHeader>
             <TableRow>

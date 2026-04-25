@@ -1,0 +1,21 @@
+title,amount,type,date,category,paymentMethod,description
+Monthly Salary,3500.00,INCOME,2026-04-15,income,BANK_TRANSFER,Monthly salary
+Grocery Shopping,45.50,EXPENSE,2026-04-20,groceries,CASH,Weekly groceries
+Electricity Bill,120.00,EXPENSE,2026-04-18,utilities,MOBILE_PAYMENT,Electricity bill payment
+Internet Bill,799.00,EXPENSE,2026-04-10,utilities,CARD,Monthly internet
+Gas Station,55.00,EXPENSE,2026-04-19,transportation,CASH,Fuel for car
+Restaurant Dinner,85.00,EXPENSE,2026-04-17,dining,CARD,Dinner with friends
+Freelance Project,500.00,INCOME,2026-04-12,investments,BANK_TRANSFER,Logo design project
+Phone Bill,599.00,EXPENSE,2026-04-08,utilities,CARD,Monthly phone bill
+Gym Membership,1500.00,EXPENSE,2026-04-01,healthcare,AUTO_DEBIT,Annual gym fee
+Movie Tickets,350.00,EXPENSE,2026-04-14,entertainment,CARD,Movie night
+Online Course,1999.00,EXPENSE,2026-04-05,shopping,CARD,React course
+Morning Coffee,45.00,EXPENSE,2026-04-22,dining,CASH,Coffee at cafe
+Uber Ride,180.00,EXPENSE,2026-04-21,transportation,MOBILE_PAYMENT,Airport ride
+Stock Dividend,250.00,INCOME,2026-04-01,investments,BANK_TRANSFER,Q1 dividend
+Pharmacy Medicines,320.00,EXPENSE,2026-04-16,healthcare,CASH,Medicines
+Programming Book,450.00,EXPENSE,2026-04-11,shopping,CARD,Programming book
+Rent Payment,12000.00,EXPENSE,2026-04-01,housing,AUTO_DEBIT,Monthly rent
+Freelance Income,800.00,INCOME,2026-04-20,investments,BANK_TRANSFER,Web development project
+Coffee Shop,30.00,EXPENSE,2026-04-23,dining,CASH,Latte and pastry
+Bus Fare,50.00,EXPENSE,2026-04-22,transportation,CASH,City bus ticket

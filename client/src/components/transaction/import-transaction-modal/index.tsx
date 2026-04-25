@@ -103,7 +103,7 @@ const ImportTransactionModal = () => {
       <Upload className="w-4 h-4" />
       Bulk Import
     </Button>
-  <DialogContent className="max-w-2xl min-h-[40vh]">
+  <DialogContent className="max-w-2xl max-h-[80vh]">
     {renderStep()}
   </DialogContent>
 </Dialog>
