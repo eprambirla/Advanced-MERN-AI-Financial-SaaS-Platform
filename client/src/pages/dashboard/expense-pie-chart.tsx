@@ -3,7 +3,6 @@ import { Label, Pie, PieChart, Cell } from "recharts";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -22,13 +21,12 @@ import { EmptyState } from "@/components/empty-state";
 import { useExpensePieChartBreakdownQuery } from "@/features/analytics/analyticsAPI";
 
 const COLORS = [
-  "var(--color-chart-1)",
-  "var(--color-chart-2)",
-  "var(--color-chart-3)",
-  "var(--color-chart-4)",
+  "var(--chart-1)",
+  "var(--chart-2)",
+  "var(--chart-3)",
+  "var(--chart-4)",
 ];
 
-// Create chart config for shadcn UI chart
 const chartConfig = {
   amount: {
     label: "Amount",
@@ -47,28 +45,28 @@ const ExpensePieChart = (props: { dateRange?: DateRangeType }) => {
   if (isFetching) {
     return <PieChartSkeleton />;
   }
-  // Custom legend component
+
   const CustomLegend = () => {
     return (
-      <div className="grid grid-cols-1 gap-x-4 gap-y-2 mt-4">
+      <div className="grid grid-cols-1 gap-3 mt-6">
         {categories.map((entry, index) => (
-          <div key={`legend-${index}`} className="flex items-center gap-2">
-            <div
-              className="h-3 w-3 rounded-full"
-              style={{ backgroundColor: COLORS[index % COLORS.length] }}
-            ></div>
-            <div className="flex justify-between w-full">
-              <span className="text-xs font-medium truncate capitalize">
+          <div key={`legend-${index}`} className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div
+                className="h-3.5 w-3.5 rounded-full"
+                style={{ backgroundColor: COLORS[index % COLORS.length] }}
+              />
+              <span className="text-sm font-medium truncate capitalize text-foreground">
                 {entry.name}
               </span>
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-muted-foreground whitespace-nowrap">
-                  {formatCurrency(entry.value)}
-                </span>
-                <span className="text-xs text-muted-foreground/60">
-                  ({formatPercentage(entry.percentage, { decimalPlaces: 0 })})
-                </span>
-              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-foreground font-medium">
+                {formatCurrency(entry.value)}
+              </span>
+              <span className="text-sm text-muted-foreground">
+                ({formatPercentage(entry.percentage, { decimalPlaces: 0 })})
+              </span>
             </div>
           </div>
         ))}
@@ -77,22 +75,24 @@ const ExpensePieChart = (props: { dateRange?: DateRangeType }) => {
   };
 
   return (
-    <Card className="!shadow-none border-1 border-gray-100 dark:border-border">
-      <CardHeader className="pb-2">
+    <Card className="border border-border bg-card h-full">
+      <CardHeader>
         <CardTitle className="text-lg">Expenses Breakdown</CardTitle>
-        <CardDescription>Total expenses {dateRange?.label}</CardDescription>
+        <p className="text-sm text-muted-foreground">Total expenses {dateRange?.label}</p>
       </CardHeader>
-      <CardContent className="h-[313px]">
-        <div className=" w-full">
-          {categories?.length === 0 ? (
+      <CardContent className="space-y-6">
+        {categories?.length === 0 ? (
+          <div className="h-[280px] flex items-center justify-center">
             <EmptyState
               title="No expenses found"
               description="There are no expenses recorded for this period."
             />
-          ) : (
+          </div>
+        ) : (
+          <>
             <ChartContainer
               config={chartConfig}
-              className="mx-auto aspect-square h-[300px]"
+              className="mx-auto aspect-square w-full max-w-[280px]"
             >
               <PieChart>
                 <ChartTooltip
@@ -104,11 +104,11 @@ const ExpensePieChart = (props: { dateRange?: DateRangeType }) => {
                   data={categories}
                   dataKey="value"
                   nameKey="name"
-                  innerRadius={60}
+                  innerRadius={55}
                   outerRadius={80}
                   paddingAngle={2}
                   strokeWidth={2}
-                  stroke="#fff"
+                  stroke="var(--card)"
                 >
                   {categories.map((_, index) => (
                     <Cell
@@ -136,7 +136,7 @@ const ExpensePieChart = (props: { dateRange?: DateRangeType }) => {
                             </tspan>
                             <tspan
                               x={viewBox.cx}
-                              y={(viewBox.cy || 0) + 20}
+                              y={(viewBox.cy || 0) + 22}
                               className="fill-muted-foreground text-xs"
                             >
                               Total Spent
@@ -150,20 +150,20 @@ const ExpensePieChart = (props: { dateRange?: DateRangeType }) => {
                 <ChartLegend content={<CustomLegend />} />
               </PieChart>
             </ChartContainer>
-          )}
-        </div>
+          </>
+        )}
       </CardContent>
     </Card>
   );
 };
 
 const PieChartSkeleton = () => (
-  <Card className="!shadow-none border-1 border-gray-100 dark:border-border">
-    <CardHeader className="pb-2">
+  <Card className="border border-border bg-card h-full">
+    <CardHeader>
       <Skeleton className="h-6 w-48" />
       <Skeleton className="h-4 w-32 mt-1" />
     </CardHeader>
-    <CardContent className="h-[313px]">
+    <CardContent className="space-y-6">
       <div className="w-full flex items-center justify-center">
         <div className="relative w-[200px] h-[200px]">
           <Skeleton className="rounded-full w-full h-full" />
@@ -173,14 +173,14 @@ const PieChartSkeleton = () => (
           </div>
         </div>
       </div>
-      <div className="mt-0 space-y-2">
+      <div className="space-y-3">
         {[1, 2, 3, 4].map((i) => (
           <div key={i} className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Skeleton className="h-3 w-3 rounded-full" />
-              <Skeleton className="h-4 w-20" />
+            <div className="flex items-center gap-3">
+              <Skeleton className="h-3.5 w-3.5 rounded-full" />
+              <Skeleton className="h-4 w-24" />
             </div>
-            <Skeleton className="h-4 w-12" />
+            <Skeleton className="h-4 w-20" />
           </div>
         ))}
       </div>

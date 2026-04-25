@@ -53,6 +53,7 @@ const transactionSchema = new Schema<TransactionDocument>(
       type: Schema.Types.ObjectId,
       required: true,
       ref: "User",
+      index: true,
     },
     title: {
       type: String,
@@ -62,6 +63,7 @@ const transactionSchema = new Schema<TransactionDocument>(
       type: String,
       enum: Object.values(TransactionTypeEnum),
       required: true,
+      index: true,
     },
     amount: {
       type: Number,
@@ -76,6 +78,7 @@ const transactionSchema = new Schema<TransactionDocument>(
     category: {
       type: String,
       required: true,
+      index: true,
     },
     receiptUrl: {
       type: String,
@@ -83,6 +86,7 @@ const transactionSchema = new Schema<TransactionDocument>(
     date: {
       type: Date,
       default: Date.now,
+      index: true,
     },
     isRecurring: {
       type: Boolean,

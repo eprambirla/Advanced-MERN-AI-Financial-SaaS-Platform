@@ -1,7 +1,6 @@
 import DashboardDataChart from "./dashboard-data-chart";
 import DashboardSummary from "./dashboard-summary";
 import PageHeader from "@/components/page-header";
-//import ExpenseBreakDown from "./expense-breakdown";
 import ExpensePieChart from "./expense-pie-chart";
 import DashboardRecentTransactions from "./dashboard-recent-transactions";
 import { useState } from "react";
@@ -23,18 +22,16 @@ const Dashboard = () => {
         }
         onMenuClick={openSidebar}
       />
-      <div className="flex-1 w-full max-w-[var(--max-width)] mx-auto px-4 lg:px-0 py-6 space-y-6">
-        {/* Dashboard Main Section */}
-        <div className="w-full grid grid-cols-1 lg:grid-cols-6 gap-8">
-          <div className="lg:col-span-4">
-            <DashboardDataChart dateRange={dateRange} />
+      <div className="flex-1 p-5 lg:p-8">
+        <div className="max-w-[var(--max-width)] mx-auto space-y-6 lg:space-y-8">
+          <div className="grid grid-cols-1 xl:grid-cols-6 gap-6">
+            <div className="xl:col-span-4">
+              <DashboardDataChart dateRange={dateRange} />
+            </div>
+            <div className="xl:col-span-2">
+              <ExpensePieChart dateRange={dateRange} />
+            </div>
           </div>
-          <div className="lg:col-span-2">
-            <ExpensePieChart dateRange={dateRange} />
-          </div>
-        </div>
-        {/* Dashboard Recent Transactions */}
-        <div className="w-full">
           <DashboardRecentTransactions />
         </div>
       </div>

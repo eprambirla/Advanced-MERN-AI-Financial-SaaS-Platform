@@ -480,10 +480,9 @@ const TransactionForm = (props: {
             />
           </div>
 
-          <div className="sticky bottom-0 bg-white dark:bg-background pb-2">
+          <div className="sticky bottom-0 bg-card pb-2">
             <Button
               type="submit"
-              className="w-full !text-white"
               disabled={isScanning}
             >
               <Loader className={cn("h-4 w-4 animate-spin mr-2", !form.formState.isSubmitting && "hidden")} />

@@ -21,11 +21,11 @@ const SignIn = () => {
       <div className="relative hidden bg-muted lg:block -mt-3">
         <div className="absolute inset-0 flex flex-col items-end justify-end pt-8 pl-8">
           <div className="w-full max-w-3xl mx-0 pr-5">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-3xl font-bold text-foreground">
               Hi, I'm your AI-powered personal finance app, Finora!
             </h1>
-            <p className="mt-4 text-gray-600 dark:text-muted-foreground">
-            Finora provides insights, monthly reports, CSV import, recurring transactions, all powered by advanced AI technology. 🚀
+            <p className="mt-4 text-muted-foreground">
+            Finora provides insights, monthly reports, CSV import, recurring transactions, all powered by advanced AI technology.
             </p>
           </div>
           <div className="relative max-w-3xl h-full w-full overflow-hidden mt-3">

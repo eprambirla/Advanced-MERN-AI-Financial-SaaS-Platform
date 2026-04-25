@@ -27,13 +27,15 @@ const Settings = () => {
         subtitle="Manage your account settings and set e-mail preferences."
         onMenuClick={openSidebar}
       />
-      <div className="flex-1 w-full max-w-[var(--max-width)] mx-auto px-4 lg:px-0 py-6">
-        <div className="flex flex-col lg:flex-row gap-6">
-          <aside className="lg:w-1/5">
-            <SidebarNav items={sidebarNavItems} />
-          </aside>
-          <div className="flex-1 lg:max-w-2xl">
-            <Outlet />
+      <div className="flex-1 p-5 lg:p-8">
+        <div className="max-w-[var(--max-width)] mx-auto">
+          <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+            <aside className="lg:w-48 flex-shrink-0">
+              <SidebarNav items={sidebarNavItems} />
+            </aside>
+            <div className="flex-1 lg:max-w-2xl">
+              <Outlet />
+            </div>
           </div>
         </div>
       </div>
@@ -44,16 +46,13 @@ const Settings = () => {
 function SidebarNav({ items }: ItemPropsType) {
   const { pathname } = useLocation();
   return (
-    <nav className={"flex space-x-2 lg:flex-col lg:space-x-0 lg:space-y-1"}>
+    <nav className="flex flex-row lg:flex-col gap-2 lg:gap-3">
       {items.map((item) => (
         <Link
           key={item.href}
           to={item.href}
           className={cn(
-            buttonVariants({ variant: "ghost" }),
-            pathname === item.href
-              ? "bg-muted hover:bg-muted"
-              : "hover:bg-transparent hover:underline",
+            buttonVariants({ variant: pathname === item.href ? "secondary" : "ghost" }),
             "justify-start"
           )}
         >

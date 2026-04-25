@@ -5,7 +5,6 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -28,7 +27,7 @@ interface PropsType {
   dateRange?: DateRangeType;
 }
 
-const COLORS = ["var(--primary)", "var(--color-destructive)"];
+const COLORS = ["var(--primary)", "var(--chart-expense)"];
 const TRANSACTION_TYPES = ["income", "expenses"];
 
 const chartConfig = {
@@ -58,54 +57,52 @@ const DashboardDataChart: React.FC<PropsType> = (props) => {
   }
 
   return (
-    <Card className="!shadow-none border-1 border-gray-100 dark:border-border !pt-0">
-      <CardHeader
-        className="flex flex-col items-stretch !space-y-0 border-b border-gray-100
-      dark:border-border !p-0 pr-1 sm:flex-row"
-      >
-        <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-0 sm:py-0">
+    <Card className="border border-border bg-card">
+      <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-border">
+        <div>
           <CardTitle className="text-lg">Transaction Overview</CardTitle>
-          <CardDescription>
-            <span>Showing total transactions {dateRange?.label}</span>
-          </CardDescription>
+          <p className="text-sm text-muted-foreground mt-1">Showing total transactions {dateRange?.label}</p>
         </div>
-        <div className="flex">
-          {TRANSACTION_TYPES.map((key) => {
+        <div className="flex gap-4 mt-4 sm:mt-0">
+          {TRANSACTION_TYPES.map((key, index) => {
             const chart = key as keyof typeof chartConfig;
             return (
               <div
                 key={chart}
-                className="flex flex-1 flex-col justify-center gap-1 px-6 py-4 text-center even:border-l 
-                sm:border-l border-gray-100 dark:border-border sm:px-4 sm:py-6 min-w-36"
+                className="flex flex-col items-center gap-1 px-4 py-2 rounded-xl bg-muted min-w-[100px]"
               >
-                <span className="w-full block text-xs text-muted-foreground">
-                  No of {chartConfig[chart].label}
+                <span className="text-xs text-muted-foreground">
+                  {key === TRANSACTION_TYPES[0] ? "Income" : "Expenses"}
                 </span>
-                <span className="flex items-center justify-center gap-2 text-lg font-semibold leading-none sm:text-3xl">
+                <div className="flex items-center gap-2">
                   {key === TRANSACTION_TYPES[0] ? (
-                    <TrendingUpIcon className="size-3 ml-2 text-primary" />
+                    <TrendingUpIcon className="size-4 text-success" />
                   ) : (
-                    <TrendingDownIcon className="size-3 ml-2 text-destructive" />
+                    <TrendingDownIcon className="size-4 text-destructive" />
                   )}
-                  {key === TRANSACTION_TYPES[0]
-                    ? totalIncomeCount
-                    : totalExpenseCount}
-                </span>
+                  <span className="text-xl font-semibold">
+                    {key === TRANSACTION_TYPES[0]
+                      ? totalIncomeCount
+                      : totalExpenseCount}
+                  </span>
+                </div>
               </div>
             );
           })}
         </div>
       </CardHeader>
-      <CardContent className="px-2 pt-2 sm:px-6 sm:pt-2 h-[300px]">
+      <CardContent className="pt-4">
         {chartData?.length === 0 ? (
-          <EmptyState
-            title="No transaction data"
-            description="There are no transactions recorded for this period."
-          />
+          <div className="h-[300px] flex items-center justify-center">
+            <EmptyState
+              title="No transaction data"
+              description="There are no transactions recorded for this period."
+            />
+          </div>
         ) : (
           <ChartContainer
             config={chartConfig}
-            className="aspect-auto h-[300px] w-full"
+            className="h-[300px] w-full"
           >
             <AreaChart data={chartData || []}>
               <defs>
@@ -124,7 +121,7 @@ const DashboardDataChart: React.FC<PropsType> = (props) => {
                   <stop offset="95%" stopColor={COLORS[1]} stopOpacity={0.1} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" />
+              <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
               <XAxis
                 dataKey="date"
                 tickLine={false}
@@ -132,12 +129,12 @@ const DashboardDataChart: React.FC<PropsType> = (props) => {
                 tickMargin={8}
                 minTickGap={isMobile ? 20 : 25}
                 tickFormatter={(value) =>
-                  format(new Date(value), isMobile ? "MMM d" : "MMMM d, yyyy")
+                  format(new Date(value), isMobile ? "MMM d" : "MMM d, yyyy")
                 }
               />
               <ChartTooltip
                 cursor={{
-                  stroke: "#94a3b8",
+                  stroke: "var(--border)",
                   strokeWidth: 1,
                   strokeDasharray: "3 3",
                 }}
@@ -192,27 +189,23 @@ const DashboardDataChart: React.FC<PropsType> = (props) => {
 };
 
 const ChartSkeleton = () => (
-  <Card className="!shadow-none border-1 border-gray-100 dark:border-border !pt-0">
-    <CardHeader className="flex flex-col items-stretch !space-y-0 border-b border-gray-100 dark:border-border !p-0 pr-1 sm:flex-row">
-      <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-0 sm:py-0">
+  <Card className="border border-border bg-card">
+    <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-border">
+      <div>
         <Skeleton className="h-6 w-48" />
         <Skeleton className="h-4 w-32 mt-1" />
       </div>
-      <div className="flex">
+      <div className="flex gap-4 mt-4 sm:mt-0">
         {[1, 2].map((i) => (
-          <div
-            key={i}
-            className="flex flex-1 flex-col justify-center gap-1 px-6 py-4 text-center even:border-l 
-            sm:border-l border-gray-100 dark:border-border sm:px-4 sm:py-6 min-w-36"
-          >
-            <Skeleton className="h-4 w-20 mx-auto" />
-            <Skeleton className="h-8 w-24 mx-auto mt-1 sm:h-12" />
+          <div key={i} className="flex flex-col items-center gap-2 px-4 py-2 rounded-xl bg-muted min-w-[100px]">
+            <Skeleton className="h-4 w-16" />
+            <Skeleton className="h-6 w-12" />
           </div>
         ))}
       </div>
     </CardHeader>
-    <CardContent className="px-2 pt-2 sm:px-6 sm:pt-2 h-[280px]">
-      <Skeleton className="h-full w-full" />
+    <CardContent className="pt-4">
+      <Skeleton className="h-[300px] w-full rounded-xl" />
     </CardContent>
   </Card>
 );

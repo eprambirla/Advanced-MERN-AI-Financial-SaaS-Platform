@@ -51,6 +51,9 @@ const budgetSchema = new Schema<BudgetDocument>(
   }
 );
 
+budgetSchema.index({ userId: 1, period: 1 });
+budgetSchema.index({ userId: 1, category: 1, period: 1 }, { unique: true });
+
 const BudgetModel = mongoose.model<BudgetDocument>("Budget", budgetSchema);
 
 export default BudgetModel;

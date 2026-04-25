@@ -13,7 +13,7 @@ const DashboardSummary = ({
   const { user } = useTypedSelector((state) => state.auth);
 
   return (
-    <div className="w-full">
+    <div className="w-full space-y-6">
       <DashboardHeader
         title={`Welcome back, ${user?.name || "Unknown"}`}
         subtitle="This is your overview report for the selected period"

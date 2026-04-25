@@ -159,8 +159,7 @@ export const DateRangeSelect = ({
         <Button
           variant="outline"
           className={cn(
-            `w-[200px] flex items-center justify-between text-left font-normal !bg-[var(--secondary-dark-color)]
-            border-gray-700 !text-white !cursor-pointer`,
+            "w-[200px] flex items-center justify-between text-left font-normal",
             !dateRange && "text-muted-foreground"
           )}
         >

@@ -14,12 +14,6 @@ export const createSavingsTarget = asyncHandler(
     const user = req.user as any;
     const userId = user?._id || user?.id;
 
-    console.log("=== CREATE SAVINGS TARGET ===");
-    console.log("req.user:", req.user);
-    console.log("userId:", userId);
-    console.log("user._id:", user?._id);
-    console.log("user.id:", user?.id);
-
     if (!userId) {
       return res.status(HTTPSTATUS.UNAUTHORIZED).json({
         success: false,
@@ -46,10 +40,6 @@ export const createSavingsTarget = asyncHandler(
       period: period || SavingsPeriodEnum.MONTHLY,
       startDate: startDate || new Date(),
     });
-
-    console.log("Created savingsTarget:", savingsTarget);
-    console.log("Created savingsTarget._id:", savingsTarget._id);
-    console.log("Created savingsTarget.toObject():", savingsTarget.toObject());
 
     return res.status(HTTPSTATUS.CREATED).json({
       success: true,
@@ -126,17 +116,11 @@ export const deleteSavingsTarget = asyncHandler(
     const user = req.user as any;
     const userId = user?._id || user?.id;
 
-    console.log("=== DELETE SAVINGS TARGET ===");
-    console.log("req.user:", req.user);
-    console.log("userId:", userId);
-
     const savingsTarget = await SavingsTargetModel.findOneAndUpdate(
       { userId, isActive: true },
       { isActive: false },
       { new: true }
     );
-
-    console.log("findOneAndUpdate result:", savingsTarget);
 
     if (!savingsTarget) {
       return res.status(HTTPSTATUS.NOT_FOUND).json({

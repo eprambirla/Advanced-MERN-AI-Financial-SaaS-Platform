@@ -58,6 +58,9 @@ const savingsTargetSchema = new Schema<SavingsTargetDocument>(
   }
 );
 
+savingsTargetSchema.index({ userId: 1, isActive: 1 });
+savingsTargetSchema.index({ userId: 1, isActive: 1, period: 1 });
+
 const SavingsTargetModel = mongoose.model<SavingsTargetDocument>(
   "SavingsTarget",
   savingsTargetSchema

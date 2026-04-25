@@ -33,25 +33,22 @@ export function UserNav({
         <Button
           variant="ghost"
           className={cn(
-            "relative !bg-transparent h-8 rounded-lg !gap-2 hover:!bg-gray-100 dark:hover:!bg-gray-800",
-            showName ? "w-full justify-start px-2" : "!w-auto !rounded-full !px-0"
+            "relative h-8 rounded-lg gap-2 hover:bg-accent",
+            showName ? "w-full justify-start px-2" : "w-auto rounded-full px-0"
           )}
         >
-          <Avatar className={cn("h-10 w-10 !cursor-pointer", showName && "h-8 w-8")}>
+          <Avatar className={cn("h-10 w-10 cursor-pointer", showName && "h-8 w-8")}>
             <AvatarImage
               src={profilePicture || ""}
-              className="!cursor-pointer "
+              className="cursor-pointer"
             />
-            <AvatarFallback
-              className="!bg-[var(--secondary-dark-color)] border !border-gray-700
-               !text-white"
-            >
+            <AvatarFallback className="bg-primary text-primary-foreground">
               {userName.charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>
           {showName && (
             <div className="flex flex-col items-start flex-1 min-w-0">
-              <span className="text-sm font-medium truncate text-gray-900 dark:text-gray-100">
+              <span className="text-sm font-medium truncate text-foreground">
                 {userName}
               </span>
             </div>
@@ -59,23 +56,22 @@ export function UserNav({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="w-56 !bg-[var(--secondary-dark-color)] !text-white
-         !border-gray-700
-        "
+        className="w-56 bg-card border-border"
         align="end"
         forceMount
       >
         <DropdownMenuLabel className="flex flex-col items-start gap-1">
-          <span className="font-semibold">{userName}</span>
-            <span className="text-[13px] text-gray-400 font-light">Free Trial (2 days left)</span>
+          <span className="font-semibold text-foreground">{userName}</span>
+            <span className="text-xs text-muted-foreground font-light">Free Trial (2 days left)</span>
            </DropdownMenuLabel>
-           <DropdownMenuSeparator className="!bg-gray-700" />
+           <DropdownMenuSeparator className="bg-border" />
            <DropdownMenuGroup>
-          <DropdownMenuItem className="hover:!bg-gray-800 hover:!text-white"
-          onClick={onLogout}
+          <DropdownMenuItem 
+            className="hover:bg-accent cursor-pointer"
+            onClick={onLogout}
           >
-            <LogOut className="w-4 h-4 mr-2" />
-            Log out
+            <LogOut className="w-4 h-4 mr-2 text-foreground" />
+            <span className="text-foreground">Log out</span>
           </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>

@@ -1,41 +1,51 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useAppDispatch, useTypedSelector } from "@/app/hook";
 import { logout, updateCredentials } from "@/features/auth/authSlice";
 import { useRefreshMutation } from "@/features/auth/authAPI";
+
+const TOKEN_REFRESH_BUFFER = 5 * 60 * 1000;
 
 const useAuthExpiration = () => {
   const { accessToken, expiresAt } = useTypedSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const [refreshToken] = useRefreshMutation();
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    const handleLogout = () => {
-      console.log("Token expired, logging out...");
-      dispatch(logout());
-    };
+    const checkTokenExpiration = async () => {
+      if (!accessToken || !expiresAt) return;
 
-    const handleTokenRefresh = async () => {
-      try {
-        const { accessToken, expiresAt } = await refreshToken({}).unwrap();
-        dispatch(updateCredentials({ accessToken, expiresAt }));
-        console.log("Token refreshed successfully");
-      } catch (error) {
-        console.error("Token refresh failed, logging out...", error);
-        handleLogout();
-      }
-    };
-
-    if (accessToken && expiresAt) {
       const currentTime = Date.now();
       const timeUntilExpiration = expiresAt - currentTime;
+
       if (timeUntilExpiration <= 0) {
-        handleTokenRefresh();
-      } else {
-        const timer = setTimeout(handleLogout, timeUntilExpiration);
-        return () => clearTimeout(timer);
+        dispatch(logout());
+        return;
       }
-    }
-  }, [accessToken, dispatch, expiresAt, refreshToken]);
+
+      if (timeUntilExpiration <= TOKEN_REFRESH_BUFFER) {
+        try {
+          const result = await refreshToken({}).unwrap();
+          dispatch(updateCredentials({ 
+            accessToken: result.accessToken, 
+            expiresAt: result.expiresAt 
+          }));
+        } catch {
+          dispatch(logout());
+        }
+      }
+    };
+
+    checkTokenExpiration();
+
+    intervalRef.current = setInterval(checkTokenExpiration, 60000);
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [accessToken, expiresAt, dispatch, refreshToken]);
 };
 
 export default useAuthExpiration;

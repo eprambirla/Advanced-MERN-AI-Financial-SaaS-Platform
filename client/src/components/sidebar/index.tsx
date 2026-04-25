@@ -43,18 +43,15 @@ const SidebarContent = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="flex min-h-screen">
-      {/* Desktop Sidebar - Fixed width 200px */}
       <aside
         className={cn(
-          "hidden lg:flex flex-col bg-white dark:bg-background border-r border-gray-200 dark:border-gray-800 h-screen sticky top-0 w-[200px] flex-shrink-0"
+          "hidden lg:flex flex-col bg-card border-r border-border h-screen sticky top-0 w-[200px] flex-shrink-0"
         )}
       >
-        {/* Sidebar Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800 min-h-[73px]">
+        <div className="flex items-center justify-between p-4 border-b border-border min-h-[73px]">
           <Logo />
         </div>
 
-        {/* Navigation Links */}
         <nav className="flex-1 p-3 space-y-1">
           {routes.map((route) => (
             <NavLink
@@ -64,8 +61,8 @@ const SidebarContent = ({ children }: { children: React.ReactNode }) => {
                 cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
                   isActive
-                    ? "bg-primary text-white"
-                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent"
                 )
               }
             >
@@ -75,8 +72,7 @@ const SidebarContent = ({ children }: { children: React.ReactNode }) => {
           ))}
         </nav>
 
-        {/* User Profile at Bottom */}
-        <div className="p-4 border-t border-gray-200 dark:border-gray-800">
+        <div className="p-4 border-t border-border">
           <UserNav
             userName={user?.name || ""}
             profilePicture={user?.profilePicture || ""}
@@ -86,28 +82,24 @@ const SidebarContent = ({ children }: { children: React.ReactNode }) => {
         </div>
       </aside>
 
-      {/* Tablet/Mobile Sidebar Overlay */}
       {isOpen && (
         <div className="lg:hidden fixed inset-0 z-50">
           <div 
             className="absolute inset-0 bg-black/50"
             onClick={closeSidebar}
           />
-          <aside className="absolute left-0 top-0 bottom-0 w-[200px] bg-white dark:bg-background shadow-xl">
-            {/* Sidebar Header with Close Button */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800 min-h-[73px]">
+          <aside className="absolute left-0 top-0 bottom-0 w-[280px] max-w-[80vw] bg-card border-r border-border shadow-xl">
+            <div className="flex items-center justify-between p-4 border-b border-border min-h-[73px]">
               <Logo />
               <Button
                 variant="ghost"
                 size="icon"
-                className="!cursor-pointer !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-800"
                 onClick={closeSidebar}
               >
                 <X className="h-5 w-5" />
               </Button>
             </div>
 
-            {/* Navigation */}
             <nav className="p-3 space-y-1">
               {routes.map((route) => (
                 <NavLink
@@ -118,8 +110,8 @@ const SidebarContent = ({ children }: { children: React.ReactNode }) => {
                     cn(
                       "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
                       isActive
-                        ? "bg-primary text-white"
-                        : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:text-foreground hover:bg-accent"
                     )
                   }
                 >
@@ -129,8 +121,7 @@ const SidebarContent = ({ children }: { children: React.ReactNode }) => {
               ))}
             </nav>
 
-            {/* User Profile */}
-            <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-800">
+            <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border">
               <UserNav
                 userName={user?.name || ""}
                 profilePicture={user?.profilePicture || ""}
@@ -142,8 +133,7 @@ const SidebarContent = ({ children }: { children: React.ReactNode }) => {
         </div>
       )}
 
-      {/* Main Content */}
-      <main className="flex-1 min-h-screen bg-gray-50 dark:bg-gray-900">
+      <main className="flex-1 min-h-screen bg-background">
         <div className="max-w-[1600px] mx-auto">
           {children}
         </div>

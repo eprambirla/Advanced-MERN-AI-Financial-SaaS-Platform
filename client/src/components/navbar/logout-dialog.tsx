@@ -37,7 +37,7 @@ const LogoutDialog = ({ isOpen, setIsOpen }: LogoutDialogProps) => {
         </DialogHeader>
         <DialogFooter>
           <Button
-            className="text-white !bg-red-500"
+            variant="destructive"
             disabled={isPending}
             type="button"
             onClick={handleLogout}

@@ -155,7 +155,7 @@ const ScheduleReportForm = ({
             </div>
 
             <div className="sticky bottom-0 py-2 z-50">
-              <Button type="submit" disabled={isLoading} className="w-full text-white">
+              <Button type="submit" disabled={isLoading} className="w-full">
                 {isLoading && <Loader className="h-4 w-4 animate-spin" />}
                 Save changes
               </Button>

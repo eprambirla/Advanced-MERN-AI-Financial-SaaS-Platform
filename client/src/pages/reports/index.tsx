@@ -14,8 +14,8 @@ export default function Reports() {
         onMenuClick={openSidebar}
         rightAction={<ScheduleReportDrawer />}
       />
-      <div className="flex-1 w-full max-w-[var(--max-width)] mx-auto px-4 lg:px-0 py-6">
-        <div className="bg-white dark:bg-background rounded-lg border border-gray-200 dark:border-gray-800">
+      <div className="flex-1 p-5 lg:p-8">
+        <div className="max-w-[var(--max-width)] mx-auto">
           <ReportTable />
         </div>
       </div>

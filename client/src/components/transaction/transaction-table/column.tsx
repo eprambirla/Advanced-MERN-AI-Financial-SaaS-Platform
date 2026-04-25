@@ -46,7 +46,6 @@ export const transactionColumns: ColumnDef<TransactionType>[] = [
     id: "select",
     header: ({ table }) => (
       <Checkbox
-        className="!border-black data-[state=checked]:!bg-gray-800 !text-white"
         checked={table.getIsAllPageRowsSelected()}
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
@@ -54,7 +53,6 @@ export const transactionColumns: ColumnDef<TransactionType>[] = [
     ),
     cell: ({ row }) => (
       <Checkbox
-        className="!border-black data-[state=checked]:!bg-gray-800 !text-white"
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label="Select row"
@@ -111,10 +109,10 @@ export const transactionColumns: ColumnDef<TransactionType>[] = [
     cell: ({ row }) => (
       <div className="capitalize">
         <span
-          className={`px-2 py-1 rounded-full text-xs ${
+          className={`px-2 py-1 rounded-full text-xs font-medium ${
             row.getValue("type") === _TRANSACTION_TYPE.INCOME
-              ? "bg-green-100 text-green-800"
-              : "bg-red-100 text-red-800"
+              ? "bg-success/10 text-success"
+              : "bg-destructive/10 text-destructive"
           }`}
         >
           {row.getValue("type")}
@@ -136,7 +134,7 @@ export const transactionColumns: ColumnDef<TransactionType>[] = [
         <div
           className={`text-right font-medium ${
             type === _TRANSACTION_TYPE.INCOME
-              ? "text-green-600"
+              ? "text-success"
               : "text-destructive"
           }`}
         >

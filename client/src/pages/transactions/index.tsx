@@ -14,14 +14,14 @@ export default function Transactions() {
         subtitle="Showing all transactions"
         onMenuClick={openSidebar}
         rightAction={
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <ImportTransactionModal />
             <AddTransactionDrawer />
           </div>
         }
       />
-      <div className="flex-1 w-full max-w-[var(--max-width)] mx-auto px-4 lg:px-0 py-6">
-        <div className="bg-white dark:bg-background rounded-lg border border-gray-200 dark:border-gray-800">
+      <div className="flex-1 p-5 lg:p-8">
+        <div className="max-w-[var(--max-width)] mx-auto">
           <TransactionTable pageSize={20} />
         </div>
       </div>

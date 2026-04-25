@@ -153,22 +153,23 @@ const calculateBudgetSpent = async (
   userId: string,
   budget: BudgetDocument
 ): Promise<number> => {
-  const startOfPeriod = new Date();
   const now = new Date();
+  let startOfPeriod: Date;
 
   switch (budget.period) {
     case "WEEKLY":
+      startOfPeriod = new Date(now);
       startOfPeriod.setDate(now.getDate() - now.getDay());
       startOfPeriod.setHours(0, 0, 0, 0);
       break;
     case "MONTHLY":
-      startOfPeriod.setDate(1);
-      startOfPeriod.setHours(0, 0, 0, 0);
+      startOfPeriod = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
       break;
     case "YEARLY":
-      startOfPeriod.setMonth(0, 1);
-      startOfPeriod.setHours(0, 0, 0, 0);
+      startOfPeriod = new Date(now.getFullYear(), 0, 1, 0, 0, 0, 0);
       break;
+    default:
+      startOfPeriod = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
   }
 
   const transactions = await TransactionModel.find({

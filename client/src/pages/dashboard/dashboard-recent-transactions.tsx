@@ -3,9 +3,7 @@ import TransactionTable from "@/components/transaction/transaction-table";
 import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardAction,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -14,22 +12,20 @@ import { PROTECTED_ROUTES } from "@/routes/common/routePath";
 
 const DashboardRecentTransactions = () => {
   return (
-    <Card className="!shadow-none border-1 border-gray-100 dark:border-border">
-      <CardHeader className="!pb-0">
-        <CardTitle className="text-xl">Recent Transactions</CardTitle>
-        <CardDescription>Showing all recent transactions</CardDescription>
-        <CardAction>
-          <Button
-            asChild
-            variant="link"
-            className="!text-gray-700 dark:!text-gray-200 !font-normal"
-          >
+    <Card className="border border-border bg-card">
+      <CardHeader className="w-full">
+        <div className="flex items-center justify-between w-full gap-4">
+          <div className="space-y-1.5">
+            <CardTitle className="text-xl font-semibold">Recent Transactions</CardTitle>
+            <p className="text-sm text-muted-foreground">Showing all recent transactions</p>
+          </div>
+          <Button asChild variant="link" className="shrink-0 text-primary hover:text-primary/80">
             <Link to={PROTECTED_ROUTES.TRANSACTIONS}>View all</Link>
           </Button>
-        </CardAction>
-        <Separator className="mt-3 !bg-gray-100 dark:!bg-gray-800" />
+        </div>
       </CardHeader>
-      <CardContent className="pt-0">
+      <Separator />
+      <CardContent className="pt-5">
         <TransactionTable pageSize={10} isShowPagination={false} />
       </CardContent>
     </Card>

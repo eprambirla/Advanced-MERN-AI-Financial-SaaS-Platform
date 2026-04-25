@@ -13,6 +13,7 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Card, CardContent } from "@/components/ui/card";
 import { 
   Dialog,
   DialogContent,
@@ -172,15 +173,14 @@ export default function Budgets() {
         renderPageHeader={
           <div className="flex flex-col gap-4">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div className="space-y-1">
-                <h2 className="text-2xl lg:text-4xl font-medium">Budgets</h2>
-                <p className="text-white/60 text-sm">Manage your spending limits</p>
+              <div className="space-y-2">
+                <h2 className="text-2xl lg:text-4xl font-bold text-foreground">Budgets</h2>
+                <p className="text-sm text-muted-foreground">Manage your spending limits</p>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                   <DialogTrigger asChild>
                     <Button 
-                      className="bg-white text-gray-900 hover:bg-gray-100"
                       disabled={isCreating || isUpdating}
                     >
                       <Plus className="h-4 w-4 mr-2" />
@@ -267,7 +267,6 @@ export default function Budgets() {
                         </Button>
                         <Button 
                           type="submit" 
-                          className="bg-primary"
                           disabled={isCreating || isUpdating}
                         >
                           {isCreating || isUpdating ? (
@@ -289,109 +288,111 @@ export default function Budgets() {
         }
       />
 
-      <div className="flex-1 w-full max-w-[var(--max-width)] mx-auto px-4 lg:px-0 py-6">
-        {isLoading ? (
-          <div className="flex items-center justify-center h-40">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-          </div>
-        ) : (
-          <>
-            {/* Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div className="bg-white dark:bg-background rounded-lg border p-4">
-                <p className="text-sm text-gray-500">Total Budget</p>
-                <p className="text-2xl font-semibold">${totalBudget.toFixed(2)}</p>
-              </div>
-              <div className="bg-white dark:bg-background rounded-lg border p-4">
-                <p className="text-sm text-gray-500">Total Spent</p>
-                <p className="text-2xl font-semibold">${totalSpent.toFixed(2)}</p>
-              </div>
-              <div className="bg-white dark:bg-background rounded-lg border p-4">
-                <p className="text-sm text-gray-500">Over Budget</p>
-                <p className="text-2xl font-semibold text-red-500">{overBudgetCount}</p>
-              </div>
+      <div className="flex-1 p-5 lg:p-8">
+        <div className="max-w-[var(--max-width)] mx-auto space-y-6">
+          {isLoading ? (
+            <div className="flex items-center justify-center h-40">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
             </div>
-
-            {/* Alert for Over Budget */}
-            {overBudgetCount > 0 && (
-              <Alert className="mb-6 border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-800">
-                <AlertTriangle className="h-4 w-4 text-red-600" />
-                <AlertTitle className="text-red-600">Over Budget Warning</AlertTitle>
-                <AlertDescription className="text-red-600/80">
-                  {overBudgetCount} budget{overBudgetCount > 1 ? "s are" : " is"} over the limit!
-                </AlertDescription>
-              </Alert>
-            )}
-
-            {/* Budget List */}
-            {budgets.length === 0 ? (
-              <div className="bg-white dark:bg-background rounded-lg border p-8 text-center">
-                <p className="text-gray-500 mb-4">No budgets created yet.</p>
-                <Button onClick={() => setIsDialogOpen(true)}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create Your First Budget
-                </Button>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6">
+                <Card className="border border-border bg-card">
+                  <CardContent className="pt-5">
+                    <p className="text-sm text-muted-foreground">Total Budget</p>
+                    <p className="text-2xl font-bold mt-2">${totalBudget.toFixed(2)}</p>
+                  </CardContent>
+                </Card>
+                <Card className="border border-border bg-card">
+                  <CardContent className="pt-5">
+                    <p className="text-sm text-muted-foreground">Total Spent</p>
+                    <p className="text-2xl font-bold mt-2">${totalSpent.toFixed(2)}</p>
+                  </CardContent>
+                </Card>
+                <Card className="border border-border bg-card">
+                  <CardContent className="pt-5">
+                    <p className="text-sm text-muted-foreground">Over Budget</p>
+                    <p className="text-2xl font-bold mt-2 text-destructive">{overBudgetCount}</p>
+                  </CardContent>
+                </Card>
               </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {budgets.map((budget) => (
-                  <div
-                    key={budget._id}
-                    className="bg-white dark:bg-background rounded-lg border p-4"
-                  >
-                    <div className="flex items-center justify-between mb-4">
-                      <div>
-                        <h3 className="font-medium">{getCategoryLabel(budget.category)}</h3>
-                        <p className="text-sm text-gray-500">{budget.period}</p>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEdit(budget)}
-                          disabled={isDeleting || isCreating || isUpdating}
-                        >
-                          <Edit2 className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDelete(budget._id)}
-                          className="text-red-500 hover:text-red-600"
-                          disabled={isDeleting}
-                        >
-                          {isDeleting ? (
-                            <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-500"></span>
-                          ) : (
-                            <Trash2 className="h-4 w-4" />
-                          )}
-                        </Button>
-                      </div>
-                    </div>
 
-                    <div className="mb-2 flex justify-between text-sm">
-                      <span className={budget.isOverBudget ? "text-red-500" : ""}>
-                        ${budget.spent?.toFixed(2)} spent
-                      </span>
-                      <span>${budget.amount.toFixed(2)}</span>
-                    </div>
+              {overBudgetCount > 0 && (
+                <Alert className="border-destructive/50 bg-destructive/10">
+                  <AlertTriangle className="h-4 w-4 text-destructive" />
+                  <AlertTitle className="text-destructive">Over Budget Warning</AlertTitle>
+                  <AlertDescription className="text-destructive/80">
+                    {overBudgetCount} budget{overBudgetCount > 1 ? "s are" : " is"} over the limit!
+                  </AlertDescription>
+                </Alert>
+              )}
 
-                    <Progress
-                      value={budget.percentage || 0}
-                      className={`h-2 ${budget.isOverBudget ? "[&>div]:bg-red-500" : budget.isNearLimit ? "[&>div]:bg-yellow-500" : "[&>div]:bg-green-500"}`}
-                    />
+              {budgets.length === 0 ? (
+                <Card className="border border-border bg-card">
+                  <CardContent className="py-12 text-center">
+                    <p className="text-muted-foreground mb-4">No budgets created yet.</p>
+                    <Button onClick={() => setIsDialogOpen(true)}>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Create Your First Budget
+                    </Button>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
+                  {budgets.map((budget) => (
+                    <Card key={budget._id} className="border border-border bg-card">
+                      <CardContent className="pt-5">
+                        <div className="flex items-center justify-between mb-5">
+                          <div className="space-y-1">
+                            <h3 className="font-semibold">{getCategoryLabel(budget.category)}</h3>
+                            <p className="text-sm text-muted-foreground">{budget.period}</p>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleEdit(budget)}
+                              disabled={isDeleting || isCreating || isUpdating}
+                            >
+                              <Edit2 className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleDelete(budget._id)}
+                              className="text-destructive hover:text-destructive"
+                              disabled={isDeleting}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
 
-                    <p className="text-xs text-gray-500 mt-2">
-                      {budget.remaining! > 0
-                        ? `$${budget.remaining?.toFixed(2)} remaining`
-                        : `$${Math.abs(budget.remaining || 0).toFixed(2)} over budget`}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            )}
-          </>
-        )}
+                        <div className="mb-2 flex justify-between text-sm">
+                          <span className={budget.isOverBudget ? "text-destructive" : ""}>
+                            ${budget.spent?.toFixed(2)} spent
+                          </span>
+                          <span>${budget.amount.toFixed(2)}</span>
+                        </div>
+
+                        <Progress
+                          value={budget.percentage || 0}
+                          className={budget.isOverBudget ? "[&>div]:bg-destructive" : budget.isNearLimit ? "[&>div]:bg-warning" : "[&>div]:bg-success"}
+                        />
+
+                        <p className="text-xs text-muted-foreground mt-2">
+                          {budget.remaining! > 0
+                            ? `$${budget.remaining?.toFixed(2)} remaining`
+                            : `$${Math.abs(budget.remaining || 0).toFixed(2)} over budget`}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
 
       <ConfirmDialog
