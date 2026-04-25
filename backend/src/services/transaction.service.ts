@@ -42,7 +42,10 @@ export const createTransactionService = async (
     lastProcessed: null,
   });
 
-  return transaction;
+  return {
+    ...transaction.toObject(),
+    id: transaction._id.toString(),
+  };
 };
 
 export const getAllTransactionService = async (
@@ -89,14 +92,20 @@ export const getAllTransactionService = async (
     TransactionModel.find(filterConditions)
       .skip(skip)
       .limit(pageSize)
-      .sort({ createdAt: -1 }),
+      .sort({ createdAt: -1 })
+      .lean(),
     TransactionModel.countDocuments(filterConditions),
   ]);
+
+  const transactionsWithId = transations.map((t: any) => ({
+    ...t,
+    id: t._id.toString(),
+  }));
 
   const totalPages = Math.ceil(totalCount / pageSize);
 
   return {
-    transations,
+    transations: transactionsWithId,
     pagination: {
       pageSize,
       pageNumber,
@@ -117,7 +126,10 @@ export const getTransactionByIdService = async (
   });
   if (!transaction) throw new NotFoundException("Transaction not found");
 
-  return transaction;
+  return {
+    ...transaction.toObject(),
+    id: transaction._id.toString(),
+  };
 };
 
 export const duplicateTransactionService = async (
@@ -130,7 +142,7 @@ export const duplicateTransactionService = async (
   });
   if (!transaction) throw new NotFoundException("Transaction not found");
 
-  const duplicated = await TransactionModel.create({
+const duplicated = await TransactionModel.create({
     ...transaction.toObject(),
     _id: undefined,
     title: `Duplicate - ${transaction.title}`,
@@ -140,11 +152,15 @@ export const duplicateTransactionService = async (
     isRecurring: false,
     recurringInterval: undefined,
     nextRecurringDate: undefined,
+    lastProcessed: undefined,
     createdAt: undefined,
     updatedAt: undefined,
   });
 
-  return duplicated;
+  return {
+    ...duplicated.toObject(),
+    id: duplicated._id.toString(),
+  };
 };
 
 export const updateTransactionService = async (

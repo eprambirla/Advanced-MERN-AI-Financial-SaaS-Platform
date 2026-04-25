@@ -31,6 +31,7 @@ export interface GetAllTransactionParams {
 
 export interface TransactionType {
   _id: string;
+  id: string;
   userId: string;
   title: string;
   type: _TransactionType;
@@ -46,7 +47,6 @@ export interface TransactionType {
   paymentMethod: string;
   createdAt: string;
   updatedAt: string;
-  id?: string;
 }
 
 export interface GetAllTransactionResponse {
