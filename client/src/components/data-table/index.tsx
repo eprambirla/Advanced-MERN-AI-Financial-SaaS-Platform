@@ -34,6 +34,11 @@ import TableSkeleton from "./table-skeleton-loader";
 import { DataTablePagination } from "./table-pagination";
 import { EmptyState } from "../empty-state";
 
+interface ColumnMeta {
+  mobileHidden?: boolean;
+  mobileLabel?: string;
+}
+
 interface FilterOption {
   key: string;
   label: string;
@@ -64,6 +69,22 @@ interface DataTableProps<TData> {
   onPageSizeChange?: (pageSize: number) => void;
 }
 
+function useIsMobile(breakpoint: number = 768) {
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < breakpoint);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, [breakpoint]);
+
+  return isMobile;
+}
+
 export function DataTable<TData>({
   data,
   columns,
@@ -82,21 +103,25 @@ export function DataTable<TData>({
   onPageChange,
   onPageSizeChange,
 }: DataTableProps<TData>) {
+  const isMobile = useIsMobile();
   const [searchTerm, setSearchTerm] = React.useState("");
-  const [filterValues, setFilterValues] = React.useState<
-    Record<string, string>
-  >({});
+  const [filterValues, setFilterValues] = React.useState<Record<string, string>>({});
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+
+  const visibleColumns = React.useMemo(() => {
+    return columns.filter((col) => {
+      const meta = col.meta as ColumnMeta | undefined;
+      if (isMobile && meta?.mobileHidden) return false;
+      return true;
+    });
+  }, [columns, isMobile]);
 
   const table = useReactTable({
     data,
-    columns,
+    columns: visibleColumns,
     state: {
       sorting,
       columnFilters,
@@ -135,11 +160,105 @@ export function DataTable<TData>({
   };
 
   const handleDelete = () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const selectedIds = selectedRows.map((row) => (row.original as any).id);
     onBulkDelete?.(selectedIds);
     setRowSelection({});
   };
+
+  if (isMobile) {
+    return (
+      <div className="w-full">
+        {/* Mobile Card View */}
+        <div className="flex flex-col gap-3">
+          {/* Search & Filters */}
+          {showSearch && (
+            <div className="flex flex-col gap-2 pb-3">
+              <Input
+                placeholder={searchPlaceholder}
+                value={searchTerm}
+                disabled={isLoading}
+                onChange={(e) => handleSearch(e.target.value)}
+              />
+              <div className="flex flex-wrap gap-2">
+                {filters.map(({ key, label, options }) => (
+                  <Select
+                    key={key}
+                    value={filterValues[key] ?? ""}
+                    disabled={isLoading}
+                    onValueChange={(value) => handleFilterChange(key, value)}
+                  >
+                    <SelectTrigger className="flex-1 min-w-[140px]">
+                      <SelectValue placeholder={label} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {options.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ))}
+                {(searchTerm || Object.keys(filterValues).length > 0) && (
+                  <Button variant="ghost" size="sm" onClick={handleClear}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Bulk Delete */}
+          {(selection && hasSelections) || isBulkDeleting ? (
+            <Button
+              disabled={isLoading || isBulkDeleting}
+              variant="errorOutline"
+              size="sm"
+              onClick={handleDelete}
+              className="mb-2"
+            >
+              <Trash className="h-4 w-4 mr-1" />
+              Delete ({selectedRows.length})
+              {isBulkDeleting && <Loader className="ml-1 h-4 w-4 animate-spin" />}
+            </Button>
+          ) : null}
+
+          {/* Card List */}
+          {isLoading ? (
+            <TableSkeleton columns={2} rows={10} />
+          ) : data.length === 0 ? (
+            <EmptyState title="No records found" description="" />
+          ) : (
+            <div className="flex flex-col gap-2">
+              {table.getRowModel().rows.map((row) => (
+                <MobileRow
+                  key={row.id}
+                  row={row}
+                  columns={visibleColumns as ColumnDef<TData, any>[]}
+                  onToggleSelect={() => row.toggleSelected()}
+                  isSelected={row.getIsSelected()}
+                />
+              ))}
+            </div>
+          )}
+
+          {/* Pagination */}
+          {isShowPagination && (
+            <div className="mt-4">
+              <DataTablePagination
+                pageNumber={pagination?.pageNumber || 1}
+                pageSize={pagination?.pageSize || 10}
+                totalCount={pagination?.totalItems || 0}
+                totalPages={pagination?.totalPages || 0}
+                onPageChange={onPageChange}
+                onPageSizeChange={onPageSizeChange}
+              />
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">
@@ -279,6 +398,45 @@ export function DataTable<TData>({
           />
         </div>
       )}
+    </div>
+  );
+}
+
+function MobileRow<TData>({
+  row,
+  columns,
+  onToggleSelect,
+  isSelected,
+}: {
+  row: any;
+  columns: ColumnDef<TData, any>[];
+  onToggleSelect: () => void;
+  isSelected: boolean;
+}) {
+  return (
+    <div
+      className={cn(
+        "rounded-lg border bg-card p-3 cursor-pointer",
+        isSelected && "ring-2 ring-primary"
+      )}
+      onClick={onToggleSelect}
+    >
+      <div className="flex items-center justify-between gap-2">
+        {row.getVisibleCells().map((cell: any) => {
+          const meta = cell.column.columnDef.meta as ColumnMeta | undefined;
+          const value = flexRender(cell.column.columnDef.cell, cell.getContext());
+          return (
+            <div key={cell.id} className="flex-1 min-w-0">
+              {meta?.mobileLabel && (
+                <div className="text-xs text-muted-foreground">
+                  {meta.mobileLabel}
+                </div>
+              )}
+              <div className="text-sm truncate">{value}</div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

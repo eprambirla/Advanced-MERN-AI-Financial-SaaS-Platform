@@ -60,6 +60,9 @@ export const transactionColumns: ColumnDef<TransactionType>[] = [
     ),
     enableSorting: false,
     enableHiding: false,
+    meta: {
+      mobileHidden: true,
+    },
   },
   {
     accessorKey: "createdAt",
@@ -73,6 +76,9 @@ export const transactionColumns: ColumnDef<TransactionType>[] = [
       </Button>
     ),
     cell: ({ row }) => format(row.getValue("createdAt"), "MMM dd, yyyy"),
+    meta: {
+      mobileHidden: true,
+    },
   },
   {
     accessorKey: "title",
@@ -93,6 +99,9 @@ export const transactionColumns: ColumnDef<TransactionType>[] = [
     cell: ({ row }) => {
       const category = row.original.category;
       return <div className="capitalize">{category}</div>;
+    },
+    meta: {
+      mobileHidden: true,
     },
   },
   {
@@ -156,6 +165,9 @@ export const transactionColumns: ColumnDef<TransactionType>[] = [
       </Button>
     ),
     cell: ({ row }) => format(row.original.date, "MMM dd, yyyy"),
+    meta: {
+      mobileLabel: "Date",
+    },
   },
   {
     accessorKey: "paymentMethod",
@@ -168,6 +180,9 @@ export const transactionColumns: ColumnDef<TransactionType>[] = [
         ?.replace("_", " ")
         ?.toLowerCase();
       return <div className="capitalize">{paymentMethodWithoutUnderscore}</div>;
+    },
+    meta: {
+      mobileHidden: true,
     },
   },
   {
@@ -225,11 +240,17 @@ export const transactionColumns: ColumnDef<TransactionType>[] = [
       );
     },
     filterFn: (row, id, value) => value.includes(row.getValue(id)),
+    meta: {
+      mobileHidden: true,
+    },
   },
   {
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => <ActionsCell row={row} />,
+    meta: {
+      mobileHidden: true,
+    },
   },
 ];
 

@@ -4,7 +4,7 @@ import {
   DialogContent,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ImportIcon } from "lucide-react";
+import { Upload } from "lucide-react";
 import FileUploadStep from "./fileupload-step";
 import ColumnMappingStep from "./column-mapping-step";
 import { CsvColumn, TransactionField } from "@/@types/transaction.type";
@@ -40,7 +40,7 @@ const ImportTransactionModal = () => {
       setCsvData(data);
       setMappings({});
       setStep(2);
-    };
+  };
 
   const resetImport = () => {
       setFile(null);
@@ -100,7 +100,7 @@ const ImportTransactionModal = () => {
       variant="outline"
       onClick={() => setOpen(true)}
     >
-      <ImportIcon className="!w-5 !h-5" />
+      <Upload className="w-4 h-4" />
       Bulk Import
     </Button>
   <DialogContent className="max-w-2xl min-h-[40vh]">

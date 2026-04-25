@@ -103,8 +103,7 @@ const FileUploadStep = ({ onFileUpload }: FileUploadStepProps) => {
       </DialogHeader>
 
       <div
-        className="w-full border-2 border-dashed rounded-lg
-       text-center"
+        className="w-full border-2 border-dashed border-border rounded-lg text-center"
         style={{
           padding: "32px",
         }}
@@ -119,7 +118,7 @@ const FileUploadStep = ({ onFileUpload }: FileUploadStepProps) => {
 
         <Button
           size="lg"
-          className="!bg-[var(--secondary-dark-color)] text-white min-w-44"
+          className="min-w-44"
           onClick={() => fileInputRef.current?.click()}
           disabled={isLoading}
         >
