@@ -3,7 +3,13 @@ import { z } from "zod";
 import { useState } from "react";
 import PageHeader from "@/components/page-header";
 import { useSidebarContext } from "@/components/sidebar";
-import { useGetBudgetsQuery, useDeleteBudgetMutation, useCreateBudgetMutation, useUpdateBudgetMutation, Budget } from "@/features/budget/budgetAPI";
+import { 
+  useGetBudgetsQuery, 
+  useDeleteBudgetMutation, 
+  useCreateBudgetMutation, 
+  useUpdateBudgetMutation, 
+  Budget 
+} from "@/features/budget/budgetAPI";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -14,6 +20,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
   AlertTriangle,
   Plus,
@@ -30,18 +37,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toast } from "sonner";
 
 const CATEGORIES = [
-  "Food & Dining",
-  "Transportation",
-  "Shopping",
-  "Bills & Utilities",
-  "Entertainment",
-  "Healthcare",
-  "Education",
-  "Travel",
-  "Groceries",
-  "Other",
+  { value: "food & dining", label: "Food & Dining" },
+  { value: "transportation", label: "Transportation" },
+  { value: "shopping", label: "Shopping" },
+  { value: "bills & utilities", label: "Bills & Utilities" },
+  { value: "entertainment", label: "Entertainment" },
+  { value: "healthcare", label: "Healthcare" },
+  { value: "education", label: "Education" },
+  { value: "travel", label: "Travel" },
+  { value: "groceries", label: "Groceries" },
+  { value: "other", label: "Other" },
 ];
 
 const PERIODS = [
@@ -61,13 +69,17 @@ type BudgetFormData = z.infer<typeof budgetSchema>;
 
 export default function Budgets() {
   const { openSidebar } = useSidebarContext();
-  const { data, isLoading, refetch } = useGetBudgetsQuery();
+  const { data, isLoading } = useGetBudgetsQuery();
   const budgets: Budget[] = data?.data || data || [];
-  const [deleteBudget] = useDeleteBudgetMutation();
-  const [createBudget] = useCreateBudgetMutation();
-  const [updateBudget] = useUpdateBudgetMutation();
+  const [deleteBudget, { isLoading: isDeleting }] = useDeleteBudgetMutation();
+  const [createBudget, { isLoading: isCreating }] = useCreateBudgetMutation();
+  const [updateBudget, { isLoading: isUpdating }] = useUpdateBudgetMutation();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingBudget, setEditingBudget] = useState<Budget | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ open: boolean; id: string | null }>({
+    open: false,
+    id: null,
+  });
 
   const form = useForm<BudgetFormData>({
     resolver: zodResolver(budgetSchema),
@@ -79,11 +91,24 @@ export default function Budgets() {
     },
   });
 
-  const handleDelete = async (id: string) => {
-    if (confirm("Are you sure you want to delete this budget?")) {
-      await deleteBudget(id);
-      refetch();
-    }
+  const handleDelete = (id: string) => {
+    setDeleteConfirm({ open: true, id });
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteConfirm.id) return;
+    
+    toast.promise(
+      deleteBudget(deleteConfirm.id).unwrap(),
+      {
+        loading: "Deleting budget...",
+        success: () => {
+          setDeleteConfirm({ open: false, id: null });
+          return "Budget deleted successfully";
+        },
+        error: "Failed to delete budget",
+      }
+    );
   };
 
   const handleEdit = (budget: Budget) => {
@@ -106,20 +131,37 @@ export default function Budgets() {
   const onSubmit = async (formData: BudgetFormData) => {
     try {
       if (editingBudget) {
-        await updateBudget({ id: editingBudget._id, payload: formData });
+        await toast.promise(
+          updateBudget({ id: editingBudget._id, payload: formData }).unwrap(),
+          {
+            loading: "Updating budget...",
+            success: "Budget updated successfully",
+            error: "Failed to update budget",
+          }
+        );
       } else {
-        await createBudget(formData);
+        await toast.promise(
+          createBudget(formData).unwrap(),
+          {
+            loading: "Creating budget...",
+            success: "Budget created successfully",
+            error: "Failed to create budget",
+          }
+        );
       }
       handleCloseDialog();
-      refetch();
     } catch (error) {
-      console.error("Failed to save budget:", error);
+      // Error is handled by toast
     }
   };
 
   const totalBudget = budgets.reduce((sum, b) => sum + b.amount, 0);
   const totalSpent = budgets.reduce((sum, b) => sum + (b.spent || 0), 0);
   const overBudgetCount = budgets.filter((b) => b.isOverBudget).length;
+
+  const getCategoryLabel = (value: string) => {
+    return CATEGORIES.find((c) => c.value === value)?.label || value;
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -137,7 +179,10 @@ export default function Budgets() {
               <div className="flex items-center gap-2">
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button className="bg-white text-gray-900 hover:bg-gray-100">
+                    <Button 
+                      className="bg-white text-gray-900 hover:bg-gray-100"
+                      disabled={isCreating || isUpdating}
+                    >
                       <Plus className="h-4 w-4 mr-2" />
                       Add Budget
                     </Button>
@@ -160,8 +205,8 @@ export default function Budgets() {
                           </SelectTrigger>
                           <SelectContent>
                             {CATEGORIES.map((cat) => (
-                              <SelectItem key={cat} value={cat}>
-                                {cat}
+                              <SelectItem key={cat.value} value={cat.value}>
+                                {cat.label}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -212,11 +257,27 @@ export default function Budgets() {
                         />
                       </div>
                       <div className="flex justify-end gap-2">
-                        <Button type="button" variant="outline" onClick={handleCloseDialog}>
+                        <Button 
+                          type="button" 
+                          variant="outline" 
+                          onClick={handleCloseDialog}
+                          disabled={isCreating || isUpdating}
+                        >
                           Cancel
                         </Button>
-                        <Button type="submit" className="bg-primary">
-                          {editingBudget ? "Update" : "Create"}
+                        <Button 
+                          type="submit" 
+                          className="bg-primary"
+                          disabled={isCreating || isUpdating}
+                        >
+                          {isCreating || isUpdating ? (
+                            <span className="flex items-center gap-2">
+                              <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
+                              {editingBudget ? "Updating..." : "Creating..."}
+                            </span>
+                          ) : (
+                            editingBudget ? "Update" : "Create"
+                          )}
                         </Button>
                       </div>
                     </form>
@@ -280,7 +341,7 @@ export default function Budgets() {
                   >
                     <div className="flex items-center justify-between mb-4">
                       <div>
-                        <h3 className="font-medium">{budget.category}</h3>
+                        <h3 className="font-medium">{getCategoryLabel(budget.category)}</h3>
                         <p className="text-sm text-gray-500">{budget.period}</p>
                       </div>
                       <div className="flex gap-2">
@@ -288,6 +349,7 @@ export default function Budgets() {
                           variant="ghost"
                           size="icon"
                           onClick={() => handleEdit(budget)}
+                          disabled={isDeleting || isCreating || isUpdating}
                         >
                           <Edit2 className="h-4 w-4" />
                         </Button>
@@ -296,8 +358,13 @@ export default function Budgets() {
                           size="icon"
                           onClick={() => handleDelete(budget._id)}
                           className="text-red-500 hover:text-red-600"
+                          disabled={isDeleting}
                         >
-                          <Trash2 className="h-4 w-4" />
+                          {isDeleting ? (
+                            <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-500"></span>
+                          ) : (
+                            <Trash2 className="h-4 w-4" />
+                          )}
                         </Button>
                       </div>
                     </div>
@@ -326,6 +393,16 @@ export default function Budgets() {
           </>
         )}
       </div>
+
+      <ConfirmDialog
+        open={deleteConfirm.open}
+        onOpenChange={(open) => setDeleteConfirm({ ...deleteConfirm, open })}
+        title="Delete Budget"
+        description="Are you sure you want to delete this budget? This action cannot be undone."
+        onConfirm={confirmDelete}
+        confirmText="Delete"
+        loading={isDeleting}
+      />
     </div>
   );
 }
