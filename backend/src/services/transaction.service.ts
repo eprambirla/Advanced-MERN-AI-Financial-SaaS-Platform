@@ -107,7 +107,7 @@ export const getAllTransactionService = async (
   const totalPages = Math.ceil(totalCount / pageSize);
 
   return {
-    transations: transactionsWithId,
+    transactions: transactionsWithId,
     pagination: {
       pageSize,
       pageNumber,
@@ -240,10 +240,10 @@ export const bulkDeleteTransactionService = async (
   });
 
   if (result.deletedCount === 0)
-    throw new NotFoundException("No transations found");
+    throw new NotFoundException("No transactions found");
 
   return {
-    sucess: true,
+    success: true,
     deletedCount: result.deletedCount,
   };
 };

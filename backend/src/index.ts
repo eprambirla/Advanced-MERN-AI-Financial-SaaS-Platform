@@ -28,22 +28,14 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(passport.initialize());
 
-// app.use(
-//   cors({
-//     origin: Env.FRONTEND_ORIGIN,
-//     credentials: true,
-//   })
-// );
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: Env.FRONTEND_ORIGIN,
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-
-// app.options("*", cors());
 
 app.get(
   "/",

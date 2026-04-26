@@ -482,6 +482,7 @@ const TransactionForm = (props: {
 
           <div className="sticky bottom-0 bg-card pb-2">
             <Button
+               className="w-full"
               type="submit"
               disabled={isScanning}
             >

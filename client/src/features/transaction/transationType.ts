@@ -31,7 +31,6 @@ export interface GetAllTransactionParams {
 
 export interface TransactionType {
   _id: string;
-  id: string;
   userId: string;
   title: string;
   type: _TransactionType;
@@ -51,7 +50,7 @@ export interface TransactionType {
 
 export interface GetAllTransactionResponse {
   message: string;
-  transations: TransactionType[];
+  transactions: TransactionType[];
   pagination: {
     pageSize: number;
     pageNumber: number;

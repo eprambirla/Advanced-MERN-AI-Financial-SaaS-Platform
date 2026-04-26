@@ -42,7 +42,14 @@ const SignInForm = ({
       const data = await login(values);
       localStorage.setItem("accessToken", data.accessToken);
       localStorage.setItem("refreshToken", data.refreshToken);
-      dispatch(setCredentials(data));
+      dispatch(
+        setCredentials({
+          accessToken: data.accessToken,
+          expiresAt: data.expiresAt,
+          user: data.user,
+          reportSetting: data.reportSetting ?? null,
+        })
+      );
       toast.success("Login successful");
       setTimeout(() => {
         navigate(PROTECTED_ROUTES.OVERVIEW);

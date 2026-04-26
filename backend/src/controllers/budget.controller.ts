@@ -1,14 +1,71 @@
 import { Request, Response } from "express";
 import { asyncHandler } from "../middlewares/asyncHandler.middlerware";
 import { HTTPSTATUS } from "../config/http.config";
-import BudgetModel, { BudgetDocument, BudgetPeriodEnum } from "../models/budget.model";
+import BudgetModel, { BudgetPeriodEnum } from "../models/budget.model";
 import TransactionModel from "../models/transaction.model";
+import { createBudgetSchema, updateBudgetSchema } from "../validators/budget.validator";
+import { BadRequestException } from "../utils/app-error";
+
+const calculateBudgetSpent = async (
+  userId: string,
+  budgetCategory: string,
+  period: string,
+  startOfPeriod: Date
+): Promise<number> => {
+  const now = new Date();
+  
+  const result = await TransactionModel.aggregate([
+    {
+      $match: {
+        userId,
+        category: budgetCategory,
+        type: "EXPENSE",
+        date: { $gte: startOfPeriod, $lte: now },
+        status: "COMPLETED",
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        total: { $sum: "$amount" },
+      },
+    },
+  ]);
+
+  return result[0]?.total || 0;
+};
+
+const getStartOfPeriod = (period: string): Date => {
+  const now = new Date();
+  switch (period) {
+    case "WEEKLY":
+      const startOfWeek = new Date(now);
+      startOfWeek.setDate(now.getDate() - now.getDay());
+      startOfWeek.setHours(0, 0, 0, 0);
+      return startOfWeek;
+    case "MONTHLY":
+      return new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
+    case "YEARLY":
+      return new Date(now.getFullYear(), 0, 1, 0, 0, 0, 0);
+    default:
+      return new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
+  }
+};
 
 export const createBudget = asyncHandler(
   async (req: Request, res: Response) => {
-    const { category, amount, period, startDate, alertThreshold } = req.body;
+    const parsed = createBudgetSchema.safeParse(req.body);
+    if (!parsed.success) {
+      throw new BadRequestException(parsed.error.errors[0].message);
+    }
+
+    const { category, amount, period, startDate, alertThreshold } = parsed.data;
     const user = req.user as any;
     const userId = user?._id || user?.id;
+
+    if (!userId) {
+      throw new BadRequestException("User not authenticated");
+    }
 
     const existingBudget = await BudgetModel.findOne({
       userId,
@@ -28,7 +85,7 @@ export const createBudget = asyncHandler(
       category,
       amount,
       period: period || BudgetPeriodEnum.MONTHLY,
-      startDate: startDate || new Date(),
+      startDate: startDate ? new Date(startDate) : new Date(),
       alertThreshold: alertThreshold || 80,
     });
 
@@ -44,11 +101,21 @@ export const getBudgets = asyncHandler(
     const user = req.user as any;
     const userId = user?._id || user?.id;
 
+    if (!userId) {
+      throw new BadRequestException("User not authenticated");
+    }
+
     const budgets = await BudgetModel.find({ userId });
 
     const budgetsWithSpent = await Promise.all(
       budgets.map(async (budget) => {
-        const spent = await calculateBudgetSpent(userId, budget);
+        const startOfPeriod = getStartOfPeriod(budget.period);
+        const spent = await calculateBudgetSpent(
+          userId,
+          budget.category,
+          budget.period,
+          startOfPeriod
+        );
         return {
           ...budget.toObject(),
           spent,
@@ -71,6 +138,11 @@ export const getBudgetById = asyncHandler(
   async (req: Request, res: Response) => {
     const user = req.user as any;
     const userId = user?._id || user?.id;
+
+    if (!userId) {
+      throw new BadRequestException("User not authenticated");
+    }
+
     const budget = await BudgetModel.findOne({
       _id: req.params.id,
       userId,
@@ -83,7 +155,13 @@ export const getBudgetById = asyncHandler(
       });
     }
 
-    const spent = await calculateBudgetSpent(userId, budget);
+    const startOfPeriod = getStartOfPeriod(budget.period);
+    const spent = await calculateBudgetSpent(
+      userId,
+      budget.category,
+      budget.period,
+      startOfPeriod
+    );
 
     return res.status(HTTPSTATUS.OK).json({
       success: true,
@@ -101,13 +179,26 @@ export const getBudgetById = asyncHandler(
 
 export const updateBudget = asyncHandler(
   async (req: Request, res: Response) => {
+    const parsed = updateBudgetSchema.safeParse(req.body);
+    if (!parsed.success) {
+      throw new BadRequestException(parsed.error.errors[0].message);
+    }
+
     const user = req.user as any;
     const userId = user?._id || user?.id;
-    const { category, amount, period, startDate, alertThreshold } = req.body;
+
+    if (!userId) {
+      throw new BadRequestException("User not authenticated");
+    }
+
+    const updateData = { ...parsed.data };
+    if (updateData.startDate) {
+      updateData.startDate = new Date(updateData.startDate as unknown as string) as unknown as Date;
+    }
 
     const budget = await BudgetModel.findOneAndUpdate(
       { _id: req.params.id, userId },
-      { category, amount, period, startDate, alertThreshold },
+      updateData,
       { new: true }
     );
 
@@ -130,6 +221,10 @@ export const deleteBudget = asyncHandler(
     const user = req.user as any;
     const userId = user?._id || user?.id;
 
+    if (!userId) {
+      throw new BadRequestException("User not authenticated");
+    }
+
     const budget = await BudgetModel.findOneAndDelete({
       _id: req.params.id,
       userId,
@@ -148,37 +243,3 @@ export const deleteBudget = asyncHandler(
     });
   }
 );
-
-const calculateBudgetSpent = async (
-  userId: string,
-  budget: BudgetDocument
-): Promise<number> => {
-  const now = new Date();
-  let startOfPeriod: Date;
-
-  switch (budget.period) {
-    case "WEEKLY":
-      startOfPeriod = new Date(now);
-      startOfPeriod.setDate(now.getDate() - now.getDay());
-      startOfPeriod.setHours(0, 0, 0, 0);
-      break;
-    case "MONTHLY":
-      startOfPeriod = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
-      break;
-    case "YEARLY":
-      startOfPeriod = new Date(now.getFullYear(), 0, 1, 0, 0, 0, 0);
-      break;
-    default:
-      startOfPeriod = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
-  }
-
-  const transactions = await TransactionModel.find({
-    userId,
-    category: budget.category,
-    type: "EXPENSE",
-    date: { $gte: startOfPeriod, $lte: now },
-    status: "COMPLETED",
-  });
-
-  return transactions.reduce((sum, tx) => sum + tx.amount, 0);
-};

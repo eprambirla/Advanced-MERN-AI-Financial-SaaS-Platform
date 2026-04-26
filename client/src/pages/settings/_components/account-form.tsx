@@ -58,7 +58,9 @@ export function AccountForm() {
       dispatch(
         updateCredentials({
           user: {
-            profilePicture: response.data.profilePicture,
+            ...(response.data.profilePicture !== null && {
+              profilePicture: response.data.profilePicture,
+            }),
             name: response.data.name,
           },
         })

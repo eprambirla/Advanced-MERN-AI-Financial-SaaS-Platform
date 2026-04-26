@@ -1,5 +1,5 @@
 import { apiClient } from "@/app/api-client";
-import { UpdateUserResponse } from "./userType";
+import { UpdateUserResponse } from "@/types";
 
 export const userApi = apiClient.injectEndpoints({
   endpoints: (builder) => ({

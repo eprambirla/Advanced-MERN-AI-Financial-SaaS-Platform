@@ -1,0 +1,207 @@
+title,amount,type,date,category,paymentMethod,description
+January Salary,5000.00,INCOME,2026-01-01,salary,BANK_TRANSFER,Monthly salary credit
+Rent Payment,1800.00,EXPENSE,2026-01-01,housing,AUTO_DEBIT,Monthly rent
+Groceries Super Mart,320.50,EXPENSE,2026-01-02,groceries,CASH,Weekly grocery shopping
+Electric Bill,145.00,EXPENSE,2026-01-03,utilities,BANK_TRANSFER,January electricity
+Water Bill,45.00,EXPENSE,2026-01-04,utilities,ONLINE,Water bill payment
+Internet Plan,59.99,EXPENSE,2026-01-05,utilities,CARD,Monthly broadband
+Mobile Recharge,399.00,EXPENSE,2026-01-06,utilities,MOBILE_PAYMENT,Monthly phone plan
+Gym Membership,1499.00,EXPENSE,2026-01-08,healthcare,AUTO_DEBIT,Monthly gym subscription
+Netflix Subscription,199.00,EXPENSE,2026-01-10,entertainment,CARD,Monthly streaming
+Gas Station Fill Up,2800.00,EXPENSE,2026-01-12,transportation,CASH,Fuel for car
+Morning Coffee,150.00,EXPENSE,2026-01-14,dining,CASH,Starbucks coffee
+Team Lunch,850.00,EXPENSE,2026-01-16,dining,CARD,Office team lunch
+Amazon Order,1299.00,EXPENSE,2026-01-18,shopping,CARD,Household items
+Pharmacy Medicines,450.00,EXPENSE,2026-01-20,healthcare,CASH,Prescription medicines
+Freelance Project,3000.00,INCOME,2026-01-22,freelance,ONLINE,Website redesign project
+Bus Pass Monthly,500.00,EXPENSE,2026-01-24,transportation,CARD,Monthly bus pass
+Movie Night,450.00,EXPENSE,2026-01-26,entertainment,CARD,Cinema tickets
+Grocery Shopping,280.00,EXPENSE,2026-01-28,groceries,CASH,Weekly essentials
+Spotify Premium,99.00,EXPENSE,2026-01-30,entertainment,CARD,Monthly music subscription
+February Salary,5000.00,INCOME,2026-02-01,salary,BANK_TRANSFER,Monthly salary credit
+Rent Payment,1800.00,EXPENSE,2026-02-01,housing,AUTO_DEBIT,Monthly rent
+Groceries Weekly,340.00,EXPENSE,2026-02-03,groceries,CASH,Weekly grocery shopping
+Electric Bill,165.00,EXPENSE,2026-02-05,utilities,BANK_TRANSFER,February electricity
+Gas Bill,85.00,EXPENSE,2026-02-07,utilities,ONLINE,Gas bill payment
+Internet Plan,59.99,EXPENSE,2026-02-08,utilities,CARD,Monthly broadband
+Mobile Recharge,399.00,EXPENSE,2026-02-10,utilities,MOBILE_PAYMENT,Monthly phone plan
+Yoga Classes,2000.00,EXPENSE,2026-01-12,healthcare,CARD,Monthly yoga subscription
+Netflix Subscription,199.00,EXPENSE,2026-02-14,entertainment,CARD,Monthly streaming
+Valentine Dinner,2500.00,EXPENSE,2026-02-14,dining,CARD,Valentine's dinner date
+Gas Station Fill Up,2650.00,EXPENSE,2026-02-16,transportation,CASH,Fuel for car
+Amazon Prime,999.00,EXPENSE,2026-02-18,shopping,CARD,Amazon prime annual
+Coffee Shop,180.00,EXPENSE,2026-02-20,dining,CASH,Coffee meetings
+Freelance Project,4500.00,INCOME,2026-02-22,freelance,ONLINE,Logo design project
+Stock Dividend,800.00,INCOME,2026-02-24,investments,BANK_TRANSFER,Q1 dividend payment
+Pharmacy Vitamins,650.00,EXPENSE,2026-02-26,healthcare,CASH,Vitamin supplements
+Grocery Shopping,310.00,EXPENSE,2026-02-28,groceries,CASH,Weekly essentials
+March Salary,5000.00,INCOME,2026-03-01,salary,BANK_TRANSFER,Monthly salary credit
+Rent Payment,1800.00,EXPENSE,2026-03-01,housing,AUTO_DEBIT,Monthly rent
+Groceries Weekly,290.00,EXPENSE,2026-03-03,groceries,CASH,Weekly grocery shopping
+Electric Bill,155.00,EXPENSE,2026-03-05,utilities,BANK_TRANSFER,March electricity
+Water Bill,50.00,EXPENSE,2026-03-07,utilities,ONLINE,Water bill payment
+Internet Plan,59.99,EXPENSE,2026-03-08,utilities,CARD,Monthly broadband
+Mobile Recharge,399.00,EXPENSE,2026-03-10,utilities,MOBILE_PAYMENT,Monthly phone plan
+Dental Checkup,2500.00,EXPENSE,2026-03-12,healthcare,CARD,Dental cleaning
+Netflix Subscription,199.00,EXPENSE,2026-03-14,entertainment,CARD,Monthly streaming
+Gas Station Fill Up,2750.00,EXPENSE,2026-03-16,transportation,CASH,Fuel for car
+Restaurant Birthday,1800.00,EXPENSE,2026-03-18,dining,CARD,Birthday celebration
+Online Course,4999.00,EXPENSE,2026-03-20,education,ONLINE,Udemy course
+Amazon Order,850.00,EXPENSE,2026-03-22,shopping,CARD,Books and supplies
+Freelance Project,5500.00,INCOME,2026-03-24,freelance,ONLINE,App development project
+Grocery Shopping,320.00,EXPENSE,2026-03-26,groceries,CASH,Weekly essentials
+Spotify Premium,99.00,EXPENSE,2026-03-28,entertainment,CARD,Monthly music subscription
+Uber Rides,450.00,EXPENSE,2026-03-30,transportation,ONLINE,Weekly commute
+April Salary,5000.00,INCOME,2026-04-01,salary,BANK_TRANSFER,Monthly salary credit
+Rent Payment,1800.00,EXPENSE,2026-04-01,housing,AUTO_DEBIT,Monthly rent
+Groceries Weekly,335.00,EXPENSE,2026-04-03,groceries,CASH,Weekly grocery shopping
+Electric Bill,180.00,EXPENSE,2026-04-05,utilities,BANK_TRANSFER,April electricity
+Gas Bill,90.00,EXPENSE,2026-04-07,utilities,ONLINE,Gas bill payment
+Internet Plan,59.99,EXPENSE,2026-04-08,utilities,CARD,Monthly broadband
+Mobile Recharge,399.00,EXPENSE,2026-04-10,utilities,MOBILE_PAYMENT,Monthly phone plan
+Gym Membership,1499.00,EXPENSE,2026-04-12,healthcare,AUTO_DEBIT,Monthly gym subscription
+Netflix Subscription,199.00,EXPENSE,2026-04-14,entertainment,CARD,Monthly streaming
+Gas Station Fill Up,2900.00,EXPENSE,2026-04-16,transportation,CASH,Fuel for car
+Coffee Shop,200.00,EXPENSE,2026-04-18,dining,CASH,Client meetings coffee
+Restaurant Lunch,650.00,EXPENSE,2026-04-20,dining,CARD,Business lunch
+Freelance Project,4000.00,INCOME,2026-04-22,freelance,ONLINE,Consulting project
+Pharmacy Medicines,380.00,EXPENSE,2026-04-24,healthcare,CASH,Monthly medicines
+Grocery Shopping,300.00,EXPENSE,2026-04-26,groceries,CASH,Weekly essentials
+Amazon Order,1100.00,EXPENSE,2026-04-28,shopping,CARD,Electronics purchase
+Spotify Premium,99.00,EXPENSE,2026-04-30,entertainment,CARD,Monthly music subscription
+May Salary,5000.00,INCOME,2026-05-01,salary,BANK_TRANSFER,Monthly salary credit
+Rent Payment,1800.00,EXPENSE,2026-05-01,housing,AUTO_DEBIT,Monthly rent
+Groceries Weekly,310.00,EXPENSE,2026-05-03,groceries,CASH,Weekly grocery shopping
+Electric Bill,175.00,EXPENSE,2026-05-05,utilities,BANK_TRANSFER,May electricity
+Water Bill,55.00,EXPENSE,2026-05-07,utilities,ONLINE,Water bill payment
+Internet Plan,59.99,EXPENSE,2026-05-08,utilities,CARD,Monthly broadband
+Mobile Recharge,399.00,EXPENSE,2026-05-10,utilities,MOBILE_PAYMENT,Monthly phone plan
+Yoga Classes,2000.00,EXPENSE,2026-05-12,healthcare,CARD,Monthly yoga subscription
+Netflix Subscription,199.00,EXPENSE,2026-05-14,entertainment,CARD,Monthly streaming
+Gas Station Fill Up,2700.00,EXPENSE,2026-05-16,transportation,CASH,Fuel for car
+Mother Day Gift,3500.00,EXPENSE,2026-05-17,shopping,CARD,Mother's day present
+Stock Dividend,950.00,INCOME,2026-05-20,investments,BANK_TRANSFER,Q2 dividend payment
+Restaurant Brunch,750.00,EXPENSE,2026-05-22,dining,CARD,Weekend family brunch
+Amazon Order,680.00,EXPENSE,2026-05-24,shopping,CARD,Home decor items
+Grocery Shopping,325.00,EXPENSE,2026-05-26,groceries,CASH,Weekly essentials
+Freelance Project,6500.00,INCOME,2026-05-28,freelance,ONLINE,Full stack project
+Spotify Premium,99.00,EXPENSE,2026-05-30,entertainment,CARD,Monthly music subscription
+June Salary,5000.00,INCOME,2026-06-01,salary,BANK_TRANSFER,Monthly salary credit
+Rent Payment,1800.00,EXPENSE,2026-06-01,housing,AUTO_DEBIT,Monthly rent
+Groceries Weekly,340.00,EXPENSE,2026-06-03,groceries,CASH,Weekly grocery shopping
+Electric Bill,220.00,EXPENSE,2026-06-05,utilities,BANK_TRANSFER,June electricity
+Gas Bill,105.00,EXPENSE,2026-06-07,utilities,ONLINE,Gas bill payment
+Internet Plan,59.99,EXPENSE,2026-06-08,utilities,CARD,Monthly broadband
+Mobile Recharge,399.00,EXPENSE,2026-06-10,utilities,MOBILE_PAYMENT,Monthly phone plan
+Gym Membership,1499.00,EXPENSE,2026-06-12,healthcare,AUTO_DEBIT,Monthly gym subscription
+AC Service,2500.00,EXPENSE,2026-06-14,utilities,ONLINE,Summer AC maintenance
+Netflix Subscription,199.00,EXPENSE,2026-06-16,entertainment,CARD,Monthly streaming
+Gas Station Fill Up,3100.00,EXPENSE,2026-06-18,transportation,CASH,Summer road trip fuel
+Hotel Booking,8500.00,EXPENSE,2026-06-20,travel,CARD,Summer vacation hotel
+Restaurant Dinner,1200.00,EXPENSE,2026-06-22,dining,CARD,Anniversary dinner
+Pharmacy Medicines,520.00,EXPENSE,2026-06-24,healthcare,CASH,Monthly medicines
+Grocery Shopping,350.00,EXPENSE,2026-06-26,groceries,CASH,Weekly essentials
+Freelance Project,5000.00,INCOME,2026-06-28,freelance,ONLINE,Backend development
+Spotify Premium,99.00,EXPENSE,2026-06-30,entertainment,CARD,Monthly music subscription
+July Salary,5000.00,INCOME,2026-07-01,salary,BANK_TRANSFER,Monthly salary credit
+Rent Payment,1800.00,EXPENSE,2026-07-01,housing,AUTO_DEBIT,Monthly rent
+Groceries Weekly,320.00,EXPENSE,2026-07-03,groceries,CASH,Weekly grocery shopping
+Electric Bill,280.00,EXPENSE,2026-07-05,utilities,BANK_TRANSFER,July peak electricity
+Water Bill,60.00,EXPENSE,2026-07-07,utilities,ONLINE,Water bill payment
+Internet Plan,59.99,EXPENSE,2026-07-08,utilities,CARD,Monthly broadband
+Mobile Recharge,399.00,EXPENSE,2026-07-10,utilities,MOBILE_PAYMENT,Monthly phone plan
+Yoga Classes,2000.00,EXPENSE,2026-07-12,healthcare,CARD,Monthly yoga subscription
+Netflix Subscription,199.00,EXPENSE,2026-07-14,entertainment,CARD,Monthly streaming
+Gas Station Fill Up,3300.00,EXPENSE,2026-07-16,transportation,CASH,Holiday travel fuel
+Movie Tickets,650.00,EXPENSE,2026-07-18,entertainment,CARD,Weekend movie
+Restaurant Lunch,550.00,EXPENSE,2026-07-20,dining,CARD,Business lunch
+Amazon Order,950.00,EXPENSE,2026-07-22,shopping,CARD,Gadgets purchase
+Pharmacy Vitamins,750.00,EXPENSE,2026-07-24,healthcare,CASH,Health supplements
+Grocery Shopping,340.00,EXPENSE,2026-07-26,groceries,CASH,Weekly essentials
+Freelance Project,7000.00,INCOME,2026-07-28,freelance,ONLINE,E-commerce website
+Stock Dividend,850.00,INCOME,2026-07-30,investments,BANK_TRANSFER,Q3 dividend payment
+August Salary,5000.00,INCOME,2026-08-01,salary,BANK_TRANSFER,Monthly salary credit
+Rent Payment,1800.00,EXPENSE,2026-08-01,housing,AUTO_DEBIT,Monthly rent
+Groceries Weekly,335.00,EXPENSE,2026-08-03,groceries,CASH,Weekly grocery shopping
+Electric Bill,260.00,EXPENSE,2026-08-05,utilities,BANK_TRANSFER,August electricity
+Gas Bill,110.00,EXPENSE,2026-08-07,utilities,ONLINE,Gas bill payment
+Internet Plan,59.99,EXPENSE,2026-08-08,utilities,CARD,Monthly broadband
+Mobile Recharge,399.00,EXPENSE,2026-08-10,utilities,MOBILE_PAYMENT,Monthly phone plan
+Gym Membership,1499.00,EXPENSE,2026-08-12,healthcare,AUTO_DEBIT,Monthly gym subscription
+Netflix Subscription,199.00,EXPENSE,2026-08-14,entertainment,CARD,Monthly streaming
+Gas Station Fill Up,2900.00,EXPENSE,2026-08-16,transportation,CASH,Fuel for car
+Online Course,2999.00,EXPENSE,2026-08-18,education,ONLINE,Professional certification
+Coffee Shop,220.00,EXPENSE,2026-08-20,dining,CASH,Client meetings
+Amazon Prime,999.00,EXPENSE,2026-08-22,shopping,CARD,Prime day sale
+Freelance Project,6000.00,INCOME,2026-08-24,freelance,ONLINE,Mobile app project
+Pharmacy Medicines,420.00,EXPENSE,2026-08-26,healthcare,CASH,Monthly prescription
+Grocery Shopping,330.00,EXPENSE,2026-08-28,groceries,CASH,Weekly essentials
+Spotify Premium,99.00,EXPENSE,2026-08-30,entertainment,CARD,Monthly music subscription
+September Salary,5000.00,INCOME,2026-09-01,salary,BANK_TRANSFER,Monthly salary credit
+Rent Payment,1800.00,EXPENSE,2026-09-01,housing,AUTO_DEBIT,Monthly rent
+Groceries Weekly,310.00,EXPENSE,2026-09-03,groceries,CASH,Weekly grocery shopping
+Electric Bill,200.00,EXPENSE,2026-09-05,utilities,BANK_TRANSFER,September electricity
+Water Bill,55.00,EXPENSE,2026-09-07,utilities,ONLINE,Water bill payment
+Internet Plan,59.99,EXPENSE,2026-09-08,utilities,CARD,Monthly broadband
+Mobile Recharge,399.00,EXPENSE,2026-09-10,utilities,MOBILE_PAYMENT,Monthly phone plan
+Yoga Classes,2000.00,EXPENSE,2026-09-12,healthcare,CARD,Monthly yoga subscription
+Netflix Subscription,199.00,EXPENSE,2026-09-14,entertainment,CARD,Monthly streaming
+Gas Station Fill Up,2750.00,EXPENSE,2026-09-16,transportation,CASH,Fuel for car
+Restaurant Dinner,900.00,EXPENSE,2026-09-18,dining,CARD,Date night dinner
+Amazon Order,720.00,EXPENSE,2026-09-20,shopping,CARD,Home essentials
+Stock Dividend,1000.00,INCOME,2026-09-22,investments,BANK_TRANSFER,Q3 additional dividend
+Freelance Project,4500.00,INCOME,2026-09-24,freelance,ONLINE,Consulting project
+Grocery Shopping,315.00,EXPENSE,2026-09-26,groceries,CASH,Weekly essentials
+Pharmacy Medicines,480.00,EXPENSE,2026-09-28,healthcare,CASH,Health medicines
+Uber Rides,380.00,EXPENSE,2026-09-30,transportation,ONLINE,Weekly commute
+October Salary,5000.00,INCOME,2026-10-01,salary,BANK_TRANSFER,Monthly salary credit
+Rent Payment,1800.00,EXPENSE,2026-10-01,housing,AUTO_DEBIT,Monthly rent
+Groceries Weekly,340.00,EXPENSE,2026-10-03,groceries,CASH,Weekly grocery shopping
+Electric Bill,185.00,EXPENSE,2026-10-05,utilities,BANK_TRANSFER,October electricity
+Gas Bill,95.00,EXPENSE,2026-10-07,utilities,ONLINE,Gas bill payment
+Internet Plan,59.99,EXPENSE,2026-10-08,utilities,CARD,Monthly broadband
+Mobile Recharge,399.00,EXPCOME,2026-10-10,utilities,MOBILE_PAYMENT,Monthly phone plan
+Gym Membership,1499.00,EXPENSE,2026-10-12,healthcare,AUTO_DEBIT,Monthly gym subscription
+Netflix Subscription,199.00,EXPENSE,2026-10-14,entertainment,CARD,Monthly streaming
+Gas Station Fill Up,2850.00,EXPENSE,2026-10-16,transportation,CASH,Fuel for car
+Amazon Order,1500.00,EXPENSE,2026-10-18,shopping,CARD,Electronics sale
+Online Course,4999.00,EXPENSE,2026-10-20,education,ONLINE,Bootcamp enrollment
+Restaurant Lunch,700.00,EXPENSE,2026-10-22,dining,CARD,Client meeting lunch
+Freelance Project,5500.00,INCOME,2026-10-24,freelance,ONLINE,UI/UX project
+Pharmacy Medicines,540.00,EXPENSE,2026-10-26,healthcare,CASH,Monthly medicines
+Grocery Shopping,325.00,EXPENSE,2026-10-28,groceries,CASH,Weekly essentials
+Spotify Premium,99.00,EXPENSE,2026-10-30,entertainment,CARD,Monthly music subscription
+November Salary,5000.00,INCOME,2026-11-01,salary,BANK_TRANSFER,Monthly salary credit
+Rent Payment,1800.00,EXPENSE,2026-11-01,housing,AUTO_DEBIT,Monthly rent
+Groceries Weekly,350.00,EXPENSE,2026-11-03,groceries,CASH,Weekly grocery shopping
+Electric Bill,195.00,EXPENSE,2026-11-05,utilities,BANK_TRANSFER,November electricity
+Water Bill,58.00,EXPENSE,2026-11-07,utilities,ONLINE,Water bill payment
+Internet Plan,59.99,EXPENSE,2026-11-08,utilities,CARD,Monthly broadband
+Mobile Recharge,399.00,EXPENSE,2026-11-10,utilities,MOBILE_PAYMENT,Monthly phone plan
+Yoga Classes,2000.00,EXPENSE,2026-11-12,healthcare,CARD,Monthly yoga subscription
+Netflix Subscription,199.00,EXPENSE,2026-11-14,entertainment,CARD,Monthly streaming
+Black Friday Sale,12000.00,EXPENSE,2026-11-15,shopping,CARD,Holiday shopping
+Gas Station Fill Up,2900.00,EXPENSE,2026-11-16,transportation,CASH,Pre-holiday travel
+Stock Dividend,900.00,INCOME,2026-11-20,investments,BANK_TRANSFER,Q4 dividend payment
+Restaurant Brunch,850.00,EXPENSE,2026-11-22,dining,CARD,Weekend family brunch
+Amazon Order,2500.00,EXPENSE,2026-11-24,shopping,CARD,Black friday deals
+Pharmacy Medicines,620.00,EXPENSE,2026-11-26,healthcare,CASH,Winter supplies
+Grocery Shopping,380.00,EXPENSE,2026-11-28,groceries,CASH,Thanksgiving prep
+Freelance Project,8000.00,INCOME,2026-11-30,freelance,ONLINE,Year-end project bonus
+December Salary,5000.00,INCOME,2026-12-01,salary,BANK_TRANSFER,Monthly salary credit
+Rent Payment,1800.00,EXPENSE,2026-12-01,housing,AUTO_DEBIT,Monthly rent
+Groceries Weekly,400.00,EXPENSE,2026-12-03,groceries,CASH,Weekly grocery shopping
+Electric Bill,215.00,EXPENSE,2026-12-05,utilities,BANK_TRANSFER,December electricity
+Gas Bill,120.00,EXPENSE,2026-12-07,utilities,ONLINE,Gas bill payment
+Internet Plan,59.99,EXPENSE,2026-12-08,utilities,CARD,Monthly broadband
+Mobile Recharge,399.00,EXPENSE,2026-12-10,utilities,MOBILE_PAYMENT,Monthly phone plan
+Gym Membership,1499.00,EXPENSE,2026-12-12,healthcare,AUTO_DEBIT,Monthly gym subscription
+Netflix Subscription,199.00,EXPENSE,2026-12-14,entertainment,CARD,Monthly streaming
+Gas Station Fill Up,3200.00,EXPENSE,2026-12-16,transportation,CASH,Holiday travel fuel
+Christmas Shopping,15000.00,EXPENSE,2026-12-18,shopping,CARD,Gift shopping
+Christmas Dinner,5000.00,EXPENSE,2026-12-20,dining,CARD,Christmas family dinner
+New Year Party,3500.00,EXPENSE,2026-12-22,entertainment,CARD,New year celebration
+Amazon Order,3000.00,EXPENSE,2026-12-24,shopping,CARD,Last minute gifts
+Grocery Shopping,450.00,EXPENSE,2026-12-26,groceries,CASH,New year prep
+Year End Bonus,10000.00,INCOME,2026-12-28,salary,BANK_TRANSFER,Annual performance bonus
+Pharmacy Medicines,750.00,EXPENSE,2026-12-30,healthcare,CASH,Winter health supplies
