@@ -1,4 +1,4 @@
-import { Label, Pie, PieChart, Cell } from "recharts";
+import { Label, Pie, PieChart, Cell, ResponsiveContainer } from "recharts";
 
 import {
   Card,
@@ -9,22 +9,22 @@ import {
 import {
   ChartConfig,
   ChartContainer,
-  ChartLegend,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { DateRangeType } from "@/components/date-range-select";
 import { formatCurrency } from "@/lib/format-currency";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatPercentage } from "@/lib/format-percentage";
 import { EmptyState } from "@/components/empty-state";
 import { useExpensePieChartBreakdownQuery } from "@/features/analytics/analyticsAPI";
+import { useIsMobile } from "@/hooks/useDevice";
 
 const COLORS = [
   "var(--chart-1)",
   "var(--chart-2)",
   "var(--chart-3)",
   "var(--chart-4)",
+  "var(--chart-5)",
 ];
 
 const chartConfig = {
@@ -35,6 +35,7 @@ const chartConfig = {
 
 const ExpensePieChart = (props: { dateRange?: DateRangeType }) => {
   const { dateRange } = props;
+  const isMobile = useIsMobile();
 
   const { data, isFetching } = useExpensePieChartBreakdownQuery({
     preset: dateRange?.value,
@@ -46,111 +47,124 @@ const ExpensePieChart = (props: { dateRange?: DateRangeType }) => {
     return <PieChartSkeleton />;
   }
 
-  const CustomLegend = () => {
-    return (
-      <div className="grid grid-cols-1 gap-3 mt-6">
-        {categories.map((entry, index) => (
-          <div key={`legend-${index}`} className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div
-                className="h-3.5 w-3.5 rounded-full"
-                style={{ backgroundColor: COLORS[index % COLORS.length] }}
-              />
-              <span className="text-sm font-medium truncate capitalize text-foreground">
-                {entry.name}
-              </span>
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="text-sm text-foreground font-medium">
-                {formatCurrency(entry.value)}
-              </span>
-              <span className="text-sm text-muted-foreground">
-                ({formatPercentage(entry.percentage, { decimalPlaces: 0 })})
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  };
+  const innerRadius = isMobile ? 45 : 55;
+  const outerRadius = isMobile ? 65 : 85;
 
   return (
-    <Card className="border border-border bg-card h-full">
-      <CardHeader>
+    <Card className="border border-border bg-card w-full overflow-hidden">
+      <CardHeader className="pb-3">
         <CardTitle className="text-lg">Expenses Breakdown</CardTitle>
-        <p className="text-sm text-muted-foreground">Total expenses {dateRange?.label}</p>
+        <p className="text-sm text-muted-foreground">
+          Total expenses {dateRange?.label}
+        </p>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="pt-0">
         {categories?.length === 0 ? (
-          <div className="h-[280px] flex items-center justify-center">
+          <div className="h-[150px] sm:h-[200px] flex items-center justify-center">
             <EmptyState
               title="No expenses found"
               description="There are no expenses recorded for this period."
             />
           </div>
         ) : (
-          <>
-            <ChartContainer
-              config={chartConfig}
-              className="mx-auto aspect-square w-full max-w-[280px]"
-            >
-              <PieChart>
-                <ChartTooltip
-                  cursor={false}
-                  content={<ChartTooltipContent />}
-                />
-
-                <Pie
-                  data={categories}
-                  dataKey="value"
-                  nameKey="name"
-                  innerRadius={55}
-                  outerRadius={80}
-                  paddingAngle={2}
-                  strokeWidth={2}
-                  stroke="var(--card)"
-                >
-                  {categories.map((_, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={COLORS[index % COLORS.length]}
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
+            <div className="w-full max-w-[180px] sm:max-w-[220px] shrink-0">
+              <ChartContainer config={chartConfig} className="aspect-square w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <ChartTooltip
+                      cursor={false}
+                      content={<ChartTooltipContent />}
                     />
-                  ))}
+                    <Pie
+                      data={categories}
+                      dataKey="value"
+                      nameKey="name"
+                      innerRadius={innerRadius}
+                      outerRadius={outerRadius}
+                      paddingAngle={2}
+                      strokeWidth={2}
+                      stroke="var(--card)"
+                    >
+                      {categories.map((_, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
+                      ))}
+                      <Label
+                        content={({ viewBox }) => {
+                          if (viewBox && "cx" in viewBox && "cy" in viewBox && typeof viewBox.cy === "number") {
+                            const cx = viewBox.cx;
+                            const cy = viewBox.cy;
+                            return (
+                              <text
+                                x={cx}
+                                y={cy}
+                                textAnchor="middle"
+                                dominantBaseline="middle"
+                                className="text-center"
+                              >
+                                <tspan
+                                  x={cx}
+                                  y={cy}
+                                  dy="-6"
+                                  className="fill-foreground text-sm sm:text-xl font-bold"
+                                >
+                                  ${(totalSpent / 1000).toFixed(1)}k
+                                </tspan>
+                                <tspan
+                                  x={cx}
+                                  y={cy}
+                                  dy="14"
+                                  className="fill-muted-foreground text-[9px] sm:text-xs"
+                                >
+                                  Total
+                                </tspan>
+                              </text>
+                            );
+                          }
+                          return null;
+                        }}
+                      />
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
+              </ChartContainer>
+            </div>
 
-                  <Label
-                    content={({ viewBox }) => {
-                      if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                        return (
-                          <text
-                            x={viewBox.cx}
-                            y={viewBox.cy}
-                            textAnchor="middle"
-                            dominantBaseline="middle"
-                          >
-                            <tspan
-                              x={viewBox.cx}
-                              y={viewBox.cy}
-                              className="fill-foreground text-2xl font-bold"
-                            >
-                              ${totalSpent.toLocaleString()}
-                            </tspan>
-                            <tspan
-                              x={viewBox.cx}
-                              y={(viewBox.cy || 0) + 22}
-                              className="fill-muted-foreground text-xs"
-                            >
-                              Total Spent
-                            </tspan>
-                          </text>
-                        );
-                      }
-                    }}
-                  />
-                </Pie>
-                <ChartLegend content={<CustomLegend />} />
-              </PieChart>
-            </ChartContainer>
-          </>
+            <div className="w-full flex-1 min-w-0 space-y-2">
+              {categories.slice(0, isMobile ? 3 : 5).map((entry, index) => (
+                <div
+                  key={`legend-${index}`}
+                  className="flex items-center justify-between gap-3 p-2 sm:p-2.5 rounded-lg bg-muted/50"
+                >
+                  <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+                    <div
+                      className="h-3 w-3 rounded-full shrink-0"
+                      style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                    />
+                    <span className="text-xs sm:text-sm font-medium truncate capitalize text-foreground">
+                      {entry.name}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+                    <span className="text-xs sm:text-sm text-foreground font-medium whitespace-nowrap">
+                      {formatCurrency(entry.value, { compact: true })}
+                    </span>
+                    <span className="text-xs text-muted-foreground whitespace-nowrap">
+                      {Math.round(entry.percentage)}%
+                    </span>
+                  </div>
+                </div>
+              ))}
+              {!isMobile && categories.length > 5 && (
+                <p className="text-xs text-muted-foreground text-center pt-1">
+                  +{categories.length - 5} more categories
+                </p>
+              )}
+            </div>
+          </div>
         )}
       </CardContent>
     </Card>
@@ -158,31 +172,25 @@ const ExpensePieChart = (props: { dateRange?: DateRangeType }) => {
 };
 
 const PieChartSkeleton = () => (
-  <Card className="border border-border bg-card h-full">
-    <CardHeader>
-      <Skeleton className="h-6 w-48" />
-      <Skeleton className="h-4 w-32 mt-1" />
+  <Card className="border border-border bg-card w-full overflow-hidden">
+    <CardHeader className="pb-3">
+      <Skeleton className="h-6 w-32 sm:w-40" />
+      <Skeleton className="h-4 w-24 sm:w-32 mt-1" />
     </CardHeader>
-    <CardContent className="space-y-6">
-      <div className="w-full flex items-center justify-center">
-        <div className="relative w-[200px] h-[200px]">
-          <Skeleton className="rounded-full w-full h-full" />
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <Skeleton className="h-8 w-24 mb-2" />
-            <Skeleton className="h-4 w-16" />
-          </div>
-        </div>
-      </div>
-      <div className="space-y-3">
-        {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Skeleton className="h-3.5 w-3.5 rounded-full" />
-              <Skeleton className="h-4 w-24" />
+    <CardContent className="pt-0">
+      <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+        <Skeleton className="w-[140px] h-[140px] sm:w-[180px] sm:h-[180px] rounded-full shrink-0" />
+        <div className="w-full space-y-2">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
+              <div className="flex items-center gap-2">
+                <Skeleton className="h-2.5 w-2.5 rounded-full" />
+                <Skeleton className="h-4 w-16" />
+              </div>
+              <Skeleton className="h-4 w-12" />
             </div>
-            <Skeleton className="h-4 w-20" />
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </CardContent>
   </Card>
