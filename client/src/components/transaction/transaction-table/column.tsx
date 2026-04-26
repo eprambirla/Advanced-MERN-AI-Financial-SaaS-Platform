@@ -308,7 +308,12 @@ const ActionsCell = ({ row }: { row: any }) => {
           }
         }}
       >
-        <DropdownMenuItem onClick={() => onOpenDrawer(transactionId)}>
+        <DropdownMenuItem
+          onSelect={(e) => {
+            e.preventDefault();
+            setTimeout(() => onOpenDrawer(transactionId), 0);
+          }}
+        >
           <Pencil className="mr-1 h-4 w-4" />
           Edit
         </DropdownMenuItem>

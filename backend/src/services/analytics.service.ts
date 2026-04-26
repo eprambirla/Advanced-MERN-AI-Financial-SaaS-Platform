@@ -5,7 +5,6 @@ import TransactionModel, {
 } from "../models/transaction.model";
 import { getDateRange } from "../utils/date";
 import { differenceInDays, subDays, subYears } from "date-fns";
-import { convertToDollarUnit } from "../utils/format-currency";
 
 export const summaryAnalyticsService = async (
   userId: string,
@@ -219,9 +218,9 @@ export const summaryAnalyticsService = async (
   }
 
   return {
-    availableBalance: convertToDollarUnit(availableBalance),
-    totalIncome: convertToDollarUnit(totalIncome),
-    totalExpenses: convertToDollarUnit(totalExpenses),
+    availableBalance,
+    totalIncome,
+    totalExpenses,
     savingRate: {
       percentage: parseFloat(savingData.savingsPercentage.toFixed(2)),
       expenseRatio: parseFloat(savingData.expenseRatio.toFixed(2)),
@@ -230,15 +229,9 @@ export const summaryAnalyticsService = async (
     percentageChange: {
       ...percentageChange,
       previousValues: {
-        incomeAmount: convertToDollarUnit(
-          percentageChange.previousValues.incomeAmount
-        ),
-        expenseAmount: convertToDollarUnit(
-          percentageChange.previousValues.expenseAmount
-        ),
-        balanceAmount: convertToDollarUnit(
-          percentageChange.previousValues.balanceAmount
-        ),
+        incomeAmount: percentageChange.previousValues.incomeAmount,
+        expenseAmount: percentageChange.previousValues.expenseAmount,
+        balanceAmount: percentageChange.previousValues.balanceAmount,
       },
     },
     preset: {
@@ -351,8 +344,8 @@ export const chartAnalyticsService = async (
 
   const transaformedData = (resultData?.chartData || []).map((item: any) => ({
     date: item.date,
-    income: convertToDollarUnit(item.income),
-    expenses: convertToDollarUnit(item.expenses),
+    income: item.income,
+    expenses: item.expenses,
   }));
 
   return {
@@ -476,10 +469,10 @@ export const expensePieChartBreakdownService = async (
     breakdown: [],
   };
   const transformedData = {
-    totalSpent: convertToDollarUnit(data.totalSpent),
+    totalSpent: data.totalSpent,
     breakdown: data.breakdown.map((item: any) => ({
       ...item,
-      value: convertToDollarUnit(item.value),
+      value: item.value,
     })),
   };
 

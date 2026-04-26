@@ -7,7 +7,6 @@ import TransactionModel, {
 import { NotFoundException } from "../utils/app-error";
 import { calulateNextReportDate } from "../utils/helper";
 import { UpdateReportSettingType } from "../validators/report.validator";
-import { convertToDollarUnit } from "../utils/format-currency";
 import { format } from "date-fns";
 import { genAI, genAIModel } from "../config/google-ai.config";
 import { createUserContent } from "@google/genai";
@@ -172,7 +171,7 @@ export const generateReportService = async (
   const byCategory = categories.reduce(
     (acc: any, { _id, total }: any) => {
       acc[_id] = {
-        amount: convertToDollarUnit(total),
+        amount: total,
         percentage:
           totalExpenses > 0 ? Math.round((total / totalExpenses) * 100) : 0,
       };
@@ -198,9 +197,9 @@ export const generateReportService = async (
   return {
     period: periodLabel,
     summary: {
-      income: convertToDollarUnit(totalIncome),
-      expenses: convertToDollarUnit(totalExpenses),
-      balance: convertToDollarUnit(availableBalance),
+      income: totalIncome,
+      expenses: totalExpenses,
+      balance: availableBalance,
       savingsRate: Number(savingsRate.toFixed(1)),
       topCategories: Object.entries(byCategory)?.map(([name, cat]: any) => ({
         name,
@@ -229,9 +228,9 @@ async function generateInsightsAI({
 }) {
   try {
     const prompt = reportInsightPrompt({
-      totalIncome: convertToDollarUnit(totalIncome),
-      totalExpenses: convertToDollarUnit(totalExpenses),
-      availableBalance: convertToDollarUnit(availableBalance),
+      totalIncome: totalIncome,
+      totalExpenses: totalExpenses,
+      availableBalance: availableBalance,
       savingsRate: Number(savingsRate.toFixed(1)),
       categories,
       periodLabel,

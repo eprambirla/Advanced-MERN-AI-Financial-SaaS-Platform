@@ -177,7 +177,9 @@ const TransactionForm = (props: {
         toast.success("Transaction created successfully");
         form.reset();
       }
-      onCloseDrawer?.();
+      setTimeout(() => {
+        onCloseDrawer?.();
+      }, 0);
     } catch (error) {
       // Error handled by interceptor
     }
