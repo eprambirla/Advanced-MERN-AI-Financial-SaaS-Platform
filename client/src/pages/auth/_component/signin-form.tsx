@@ -126,6 +126,11 @@ const SignInForm = ({
             Sign up
           </Link>
         </div>
+        <div className="text-center text-sm">
+          <Link to={AUTH_ROUTES.FORGOT_PASSWORD} className="underline underline-offset-4">
+            Forgot Password?
+          </Link>
+        </div>
       </form>
     </Form>
   );

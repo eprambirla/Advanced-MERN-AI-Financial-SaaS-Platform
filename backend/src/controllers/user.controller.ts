@@ -4,8 +4,10 @@ import {
   findByIdUserService,
   updateUserService,
 } from "../services/user.service";
+import { changePasswordService } from "../services/auth.service";
 import { HTTPSTATUS } from "../config/http.config";
 import { updateUserSchema } from "../validators/user.validator";
+import { changePasswordSchema } from "../validators/auth.validator";
 
 export const getCurrentUserController = asyncHandler(
   async (req: Request, res: Response) => {
@@ -31,5 +33,16 @@ export const updateUserController = asyncHandler(
       message: "User profile updated successfully",
       data: user,
     });
+  }
+);
+
+export const changePasswordController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const body = changePasswordSchema.parse(req.body);
+    const userId = req.user?._id;
+
+    const result = await changePasswordService(userId, body);
+
+    return res.status(HTTPSTATUS.OK).json(result);
   }
 );

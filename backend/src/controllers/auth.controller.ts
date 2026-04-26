@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { HTTPSTATUS } from "../config/http.config";
 import { asyncHandler } from "../middlewares/asyncHandler.middlerware";
-import { loginSchema, registerSchema } from "../validators/auth.validator";
-import { loginService, registerService } from "../services/auth.service";
+import { loginSchema, registerSchema, forgotPasswordSchema, resetPasswordSchema } from "../validators/auth.validator";
+import { loginService, registerService, forgotPasswordService, resetPasswordService } from "../services/auth.service";
 
 export const registerController = asyncHandler(
   async (req: Request, res: Response) => {
@@ -32,5 +32,23 @@ export const loginController = asyncHandler(
       expiresAt,
       reportSetting,
     });
+  }
+);
+
+export const forgotPasswordController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const body = forgotPasswordSchema.parse(req.body);
+    const result = await forgotPasswordService(body);
+
+    return res.status(HTTPSTATUS.OK).json(result);
+  }
+);
+
+export const resetPasswordController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const body = resetPasswordSchema.parse(req.body);
+    const result = await resetPasswordService(body);
+
+    return res.status(HTTPSTATUS.OK).json(result);
   }
 );

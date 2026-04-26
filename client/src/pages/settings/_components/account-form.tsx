@@ -19,6 +19,16 @@ import { Loader } from "lucide-react";
 import { useAppDispatch, useTypedSelector } from "@/app/hook";
 import { updateUser, UpdateUserInput } from "@/lib/api/user";
 import { updateCredentials } from "@/features/auth/authSlice";
+import { useChangePasswordMutation } from "@/features/user/userAPI";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
 
 const accountFormSchema = z.object({
   name: z
@@ -153,6 +163,125 @@ export function AccountForm() {
           </Button>
         </div>
       </form>
+      <Separator />
+      <ChangePasswordSection />
     </Form>
+  );
+}
+
+function ChangePasswordSection() {
+  const [changePassword, { isLoading }] = useChangePasswordMutation();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const passwordForm = useForm<{
+    currentPassword: string;
+    newPassword: string;
+    confirmPassword: string;
+  }>({
+    resolver: zodResolver(
+      z
+        .object({
+          currentPassword: z.string().min(1, "Current password is required"),
+          newPassword: z.string().min(6, "Password must be at least 6 characters"),
+          confirmPassword: z.string(),
+        })
+        .refine((data) => data.newPassword === data.confirmPassword, {
+          message: "Passwords don't match",
+          path: ["confirmPassword"],
+        })
+    ),
+    defaultValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
+  });
+
+  const onSubmit = async (values: {
+    currentPassword: string;
+    newPassword: string;
+    confirmPassword: string;
+  }) => {
+    try {
+      await changePassword({
+        currentPassword: values.currentPassword,
+        newPassword: values.newPassword,
+      }).unwrap();
+      toast.success("Password changed successfully");
+      setIsOpen(false);
+      passwordForm.reset();
+    } catch (error) {
+      // Error handled by interceptor
+    }
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" className="w-full">
+          Change Password
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Change Password</DialogTitle>
+          <DialogDescription>
+            Enter your current password and new password to change your password.
+          </DialogDescription>
+        </DialogHeader>
+        <Form {...passwordForm}>
+          <form onSubmit={passwordForm.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={passwordForm.control}
+              name="currentPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Current Password</FormLabel>
+                  <FormControl>
+                    <Input type="password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={passwordForm.control}
+              name="newPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>New Password</FormLabel>
+                  <FormControl>
+                    <Input type="password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={passwordForm.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirm New Password</FormLabel>
+                  <FormControl>
+                    <Input type="password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="flex justify-end gap-2 pt-2">
+              <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isLoading}>
+                {isLoading && <Loader className="mr-2 h-4 w-4 animate-spin" />}
+                Change Password
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
   );
 }
