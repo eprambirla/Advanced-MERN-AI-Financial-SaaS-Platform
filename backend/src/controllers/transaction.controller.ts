@@ -14,6 +14,7 @@ import {
   createTransactionService,
   deleteTransactionService,
   duplicateTransactionService,
+  exportTransactionsService,
   getAllTransactionService,
   getTransactionByIdService,
   scanReceiptService,
@@ -160,5 +161,31 @@ export const scanReceiptController = asyncHandler(
       message: "Reciept scanned successfully",
       data: result,
     });
+  }
+);
+
+export const exportTransactionsController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const user = req.user as any;
+    const userId = user?._id || user?.id;
+
+    const filters = {
+      keyword: req.query.keyword as string | undefined,
+      type: req.query.type as keyof typeof TransactionTypeEnum | undefined,
+      recurringStatus: req.query.recurringStatus as
+        | "RECURRING"
+        | "NON_RECURRING"
+        | undefined,
+    };
+
+    const result = await exportTransactionsService(userId, filters);
+
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="transactions-export-${new Date().toISOString().split("T")[0]}.csv"`
+    );
+
+    return res.status(HTTPSTATUS.OK).send(result.csvContent);
   }
 );

@@ -283,17 +283,22 @@ export const scanReceiptService = async (
 ) => {
   if (!file) throw new BadRequestException("No file uploaded");
 
-  try {
-    if (!file.path) throw new BadRequestException("failed to upload file");
+  if (!file.path) throw new BadRequestException("failed to upload file");
 
-    console.log(file.path);
+  try {
+    console.log("📸 Scanning receipt:", file.path);
+    console.log("📸 File mimetype:", file.mimetype);
 
     const responseData = await axios.get(file.path, {
       responseType: "arraybuffer",
     });
     const base64String = Buffer.from(responseData.data).toString("base64");
 
-    if (!base64String) throw new BadRequestException("Could not process file");
+    if (!base64String) {
+      throw new Error("Could not convert image to base64");
+    }
+
+    console.log("✅ Image converted to base64, calling Google AI...");
 
     const result = await genAI.models.generateContent({
       model: genAIModel,
@@ -310,18 +315,20 @@ export const scanReceiptService = async (
       },
     });
 
+    console.log("✅ Google AI response received");
+    console.log("Raw response:", result.text);
+
     const response = result.text;
     const cleanedText = response?.replace(/```(?:json)?\n?/g, "").trim();
 
-    if (!cleanedText)
-      return {
-        error: "Could not read reciept  content",
-      };
+    if (!cleanedText) {
+      throw new Error("Could not parse AI response");
+    }
 
     const data = JSON.parse(cleanedText);
 
     if (!data.amount || !data.date) {
-      return { error: "Reciept missing required information" };
+      throw new Error("Receipt missing required information (amount or date)");
     }
 
     return {
@@ -334,7 +341,81 @@ export const scanReceiptService = async (
       type: data.type,
       receiptUrl: file.path,
     };
-  } catch (error) {
-    return { error: "Reciept scanning  service unavailable" };
+  } catch (error: any) {
+    console.error("❌ Receipt scan error:", error?.message || error);
+    console.error("❌ Full error:", error);
+    throw new BadRequestException(error?.message || "Receipt scanning service unavailable");
   }
+};
+
+export const exportTransactionsService = async (
+  userId: string,
+  filters: {
+    keyword?: string;
+    type?: keyof typeof TransactionTypeEnum;
+    recurringStatus?: "RECURRING" | "NON_RECURRING";
+  }
+) => {
+  const filterConditions: Record<string, any> = {
+    userId,
+  };
+
+  if (filters.keyword) {
+    filterConditions.$or = [
+      { title: { $regex: filters.keyword, $options: "i" } },
+      { category: { $regex: filters.keyword, $options: "i" } },
+    ];
+  }
+
+  if (filters.type) {
+    filterConditions.type = filters.type;
+  }
+
+  if (filters.recurringStatus) {
+    if (filters.recurringStatus === "RECURRING") {
+      filterConditions.isRecurring = true;
+    } else if (filters.recurringStatus === "NON_RECURRING") {
+      filterConditions.isRecurring = false;
+    }
+  }
+
+  const transactions = await TransactionModel.find(filterConditions)
+    .sort({ date: -1 })
+    .lean();
+
+  const csvHeader = [
+    "title",
+    "description",
+    "amount",
+    "type",
+    "category",
+    "date",
+    "paymentMethod",
+    "isRecurring",
+    "recurringInterval",
+  ];
+
+  const csvRows = transactions.map((t: any) => [
+    t.title || "",
+    t.description || "",
+    t.amount || 0,
+    t.type || "",
+    t.category || "",
+    t.date ? new Date(t.date).toISOString().split("T")[0] : "",
+    t.paymentMethod || "",
+    t.isRecurring ? "Yes" : "No",
+    t.recurringInterval || "",
+  ]);
+
+  const csvContent = [
+    csvHeader.join(","),
+    ...csvRows.map((row) =>
+      row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(",")
+    ),
+  ].join("\n");
+
+  return {
+    csvContent,
+    count: transactions.length,
+  };
 };

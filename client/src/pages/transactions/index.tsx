@@ -2,6 +2,7 @@ import PageHeader from "@/components/page-header";
 import AddTransactionDrawer from "@/components/transaction/add-transaction-drawer";
 import TransactionTable from "@/components/transaction/transaction-table";
 import ImportTransactionModal from "@/components/transaction/import-transaction-modal";
+import BulkExportButton from "@/components/transaction/bulk-export-button";
 import { useSidebarContext } from "@/components/sidebar";
 
 export default function Transactions() {
@@ -15,6 +16,7 @@ export default function Transactions() {
         onMenuClick={openSidebar}
         rightAction={
           <div className="flex items-center gap-3">
+            <BulkExportButton />
             <ImportTransactionModal />
             <AddTransactionDrawer />
           </div>

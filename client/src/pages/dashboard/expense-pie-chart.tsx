@@ -137,7 +137,7 @@ const ExpensePieChart = (props: { dateRange?: DateRangeType }) => {
               {categories.slice(0, isMobile ? 3 : 5).map((entry, index) => (
                 <div
                   key={`legend-${index}`}
-                  className="flex items-center justify-between gap-3 p-2 sm:p-2.5 rounded-lg bg-muted/50"
+                  className="flex items-center  gap-3 p-2 sm:p-2.5 rounded-lg bg-muted/50"
                 >
                   <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
                     <div
@@ -148,12 +148,9 @@ const ExpensePieChart = (props: { dateRange?: DateRangeType }) => {
                       {entry.name}
                     </span>
                   </div>
-                  <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+                  <div className="flex items-center  gap-4 sm:gap-6 shrink-0">
                     <span className="text-xs sm:text-sm text-foreground font-medium whitespace-nowrap">
                       {formatCurrency(entry.value, { compact: true })}
-                    </span>
-                    <span className="text-xs text-muted-foreground whitespace-nowrap">
-                      {Math.round(entry.percentage)}%
                     </span>
                   </div>
                 </div>

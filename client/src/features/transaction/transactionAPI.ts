@@ -91,6 +91,27 @@ export const transactionApi = apiClient.injectEndpoints({
       }
     ),
 
+    exportTransactions: builder.query<string, GetAllTransactionParams>({
+      query: (params) => {
+        const {
+          keyword = undefined,
+          type = undefined,
+          recurringStatus = undefined,
+        } = params;
+
+        return {
+          url: "/transaction/export",
+          method: "GET",
+          params: {
+            keyword,
+            type,
+            recurringStatus,
+          },
+          responseType: "text",
+        };
+      },
+    }),
+
     deleteTransaction: builder.mutation<void, string>({
       query: (id) => ({
         url: `/transaction/delete/${id}`,
@@ -120,6 +141,7 @@ export const {
   useDuplicateTransactionMutation,
   useUpdateTransactionMutation,
   useBulkImportTransactionMutation,
+  useExportTransactionsQuery,
   useDeleteTransactionMutation,
   useBulkDeleteTransactionMutation,
 } = transactionApi;
