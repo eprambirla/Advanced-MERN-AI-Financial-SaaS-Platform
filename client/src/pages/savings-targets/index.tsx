@@ -126,8 +126,8 @@ export default function SavingsTargets() {
         );
       }
       handleCloseDialog();
-    } catch (error) {
-      // Error handled by toast
+} catch (error) {
+      console.error(error);
     }
   };
 

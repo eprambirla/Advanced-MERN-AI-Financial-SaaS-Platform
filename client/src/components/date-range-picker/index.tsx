@@ -21,10 +21,11 @@ export function CalendarDateRangePicker({
     from: new Date(2023, 0, 20),
     to: addDays(new Date(2023, 0, 20), 20),
   })
+  const [open, setOpen] = React.useState(false)
 
   return (
     <div className={cn("grid gap-2", className)}>
-      <Popover>
+      <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             id="date"
@@ -55,7 +56,12 @@ export function CalendarDateRangePicker({
             mode="range"
             defaultMonth={date?.from}
             selected={date}
-            onSelect={setDate}
+            onSelect={(range) => {
+              setDate(range);
+              if (range?.from && range?.to) {
+                setOpen(false);
+              }
+            }}
             numberOfMonths={2}
           />
         </PopoverContent>

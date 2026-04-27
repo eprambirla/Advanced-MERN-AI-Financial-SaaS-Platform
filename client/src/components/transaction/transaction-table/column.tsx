@@ -266,7 +266,7 @@ const ActionsCell = ({ row }: { row: any }) => {
   const [deleteTransaction, { isLoading: isDeleting }] =
     useDeleteTransactionMutation();
 
-  const handleDuplicate = (e: Event) => {
+const handleDuplicate = (e: Event) => {
     e.preventDefault();
     if (isDuplicating) return;
     duplicateTransaction(transactionId)
@@ -275,7 +275,8 @@ const ActionsCell = ({ row }: { row: any }) => {
         toast.success("Transaction duplicated successfully");
       })
       .catch((error) => {
-        toast.error(error.data?.message || "Failed to duplicate transaction");
+        const message = error?.data?.message || "Failed to duplicate transaction";
+        toast.error(message);
       });
   };
 

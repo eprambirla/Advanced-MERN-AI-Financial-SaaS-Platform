@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
+import { toast } from "sonner";
 
 const BulkExportButton = () => {
   const [isExporting, setIsExporting] = useState(false);
@@ -29,7 +30,7 @@ const BulkExportButton = () => {
         window.URL.revokeObjectURL(url);
       }
     } catch (error) {
-      console.error("Export failed:", error);
+      toast.error("Failed to export transactions");
     } finally {
       setIsExporting(false);
     }

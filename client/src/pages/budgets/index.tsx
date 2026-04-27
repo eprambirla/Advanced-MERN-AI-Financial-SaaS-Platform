@@ -152,7 +152,7 @@ export default function Budgets() {
       }
       handleCloseDialog();
     } catch (error) {
-      // Error is handled by toast
+      console.error(error);
     }
   });
 

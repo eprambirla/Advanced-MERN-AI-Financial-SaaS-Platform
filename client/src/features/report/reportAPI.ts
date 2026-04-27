@@ -22,10 +22,19 @@ export const reportApi = apiClient.injectEndpoints({
         body: payload,
       }),
     }),
+
+    generateReport: builder.query<any, { from: string; to: string }>({
+      query: (params) => ({
+        url: "/report/generate",
+        method: "GET",
+        params,
+      }),
+    }),
   }),
 });
 
 export const {
     useGetAllReportsQuery,
-    useUpdateReportSettingMutation
+    useUpdateReportSettingMutation,
+    useGenerateReportQuery
 } = reportApi;

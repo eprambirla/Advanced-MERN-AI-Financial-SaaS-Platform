@@ -43,8 +43,27 @@ export const generateReportController = asyncHandler(
   async (req: Request, res: Response) => {
     const userId = req.user?._id;
     const { from, to } = req.query;
+    
+    if (!from || !to) {
+      return res.status(HTTPSTATUS.BAD_REQUEST).json({
+        message: "Please provide from and to dates",
+      });
+    }
+    
     const fromDate = new Date(from as string);
     const toDate = new Date(to as string);
+
+    if (isNaN(fromDate.getTime())) {
+      return res.status(HTTPSTATUS.BAD_REQUEST).json({
+        message: "Invalid from date format",
+      });
+    }
+    
+    if (isNaN(toDate.getTime())) {
+      return res.status(HTTPSTATUS.BAD_REQUEST).json({
+        message: "Invalid to date format",
+      });
+    }
 
     const result = await generateReportService(userId, fromDate, toDate);
 
