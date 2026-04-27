@@ -99,6 +99,7 @@ const DashboardDataChart: React.FC<PropsType> = (props) => {
             <EmptyState
               title="No transaction data"
               description="There are no transactions recorded for this period."
+              variant="analytics"
             />
           </div>
         ) : (

@@ -64,6 +64,7 @@ const ExpensePieChart = (props: { dateRange?: DateRangeType }) => {
             <EmptyState
               title="No expenses found"
               description="There are no expenses recorded for this period."
+              variant="analytics"
             />
           </div>
         ) : (

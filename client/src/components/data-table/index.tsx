@@ -212,7 +212,11 @@ export function DataTable<TData>({
           {isLoading ? (
             <TableSkeleton columns={2} rows={10} />
           ) : data.length === 0 ? (
-            <EmptyState title="No records found" description="" />
+            <EmptyState 
+              title="No records found" 
+              description="Try adjusting your search or filters"
+              variant="transactions"
+            />
           ) : (
             <div className="flex flex-col gap-2">
               {table.getRowModel().rows.map((row) => (
@@ -360,7 +364,11 @@ export function DataTable<TData>({
                     colSpan={columns.length}
                     className="text-center h-24"
                   >
-                    <EmptyState title="No records found" description="" />
+                    <EmptyState 
+                      title="No records found" 
+                      description="Try adjusting your search or filters"
+                      variant="transactions"
+                    />
                   </TableCell>
                 </TableRow>
               )}
@@ -395,30 +403,62 @@ function MobileRow({
   onToggleSelect: () => void;
   isSelected: boolean;
 }) {
+  const visibleCells = row.getVisibleCells();
+  const firstCell = visibleCells[0];
+  const titleCell = visibleCells.find((c: any) => c.column.columnDef.accessorKey === "title") || visibleCells[2];
+  const amountCell = visibleCells.find((c: any) => c.column.columnDef.accessorKey === "amount");
+  const typeCell = visibleCells.find((c: any) => c.column.columnDef.accessorKey === "type");
+  const dateCell = visibleCells.find((c: any) => c.column.columnDef.accessorKey === "date");
+  const categoryCell = visibleCells.find((c: any) => c.column.columnDef.accessorKey === "category");
+  
+  const title = titleCell ? flexRender(titleCell.column.columnDef.cell, titleCell.getContext()) : null;
+  const amount = amountCell ? flexRender(amountCell.column.columnDef.cell, amountCell.getContext()) : null;
+  const type = typeCell ? flexRender(typeCell.column.columnDef.cell, typeCell.getContext()) : null;
+  const date = dateCell ? flexRender(dateCell.column.columnDef.cell, dateCell.getContext()) : null;
+  const category = categoryCell ? flexRender(categoryCell.column.columnDef.cell, categoryCell.getContext()) : null;
+  
   return (
     <div
       className={cn(
-        "rounded-lg border bg-card p-3 cursor-pointer",
-        isSelected && "ring-2 ring-primary"
+        "rounded-lg border bg-card p-3 cursor-pointer transition-all active:scale-[0.98]",
+        isSelected ? "ring-2 ring-primary bg-primary/5" : "hover:bg-muted/50"
       )}
       onClick={onToggleSelect}
     >
-      <div className="flex items-center justify-between gap-2">
-        {row.getVisibleCells().map((cell: any) => {
-          const meta = cell.column.columnDef.meta as ColumnMeta | undefined;
-          const value = flexRender(cell.column.columnDef.cell, cell.getContext());
-          return (
-            <div key={cell.id} className="flex-1 min-w-0">
-              {meta?.mobileLabel && (
-                <div className="text-xs text-muted-foreground">
-                  {meta.mobileLabel}
-                </div>
-              )}
-              <div className="text-sm truncate">{value}</div>
-            </div>
-          );
-        })}
+      <div className="flex items-start justify-between gap-2 mb-2">
+        <div className="flex-1 min-w-0">
+          <div className="text-sm font-medium truncate">{title}</div>
+          <div className="text-xs text-muted-foreground capitalize">{category}</div>
+        </div>
+        <div className={cn(
+          "text-sm font-semibold shrink-0",
+          type?.props?.children?.[0] === "INCOME" ? "text-success" : "text-destructive"
+        )}>
+          {amount}
+        </div>
       </div>
+      <div className="flex items-center justify-between gap-2">
+        <div className="text-xs text-muted-foreground">{date}</div>
+        <div className="flex items-center gap-1">
+          {type}
+        </div>
+      </div>
+      {visibleCells.length > 5 && (
+        <div className="mt-2 pt-2 border-t border-border/50">
+          <div className="flex flex-wrap gap-1">
+            {visibleCells.slice(5).map((cell: any, idx: number) => {
+              const meta = cell.column.columnDef.meta as ColumnMeta | undefined;
+              const value = flexRender(cell.column.columnDef.cell, cell.getContext());
+              if (!value || (meta?.mobileHidden)) return null;
+              return (
+                <div key={cell.id} className="text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
+                  {meta?.mobileLabel || value}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
