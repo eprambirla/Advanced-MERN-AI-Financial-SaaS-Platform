@@ -46,6 +46,8 @@ const SignInForm = ({
         setCredentials({
           accessToken: data.accessToken,
           expiresAt: data.expiresAt,
+          refreshToken: data.refreshToken,
+          refreshExpiresAt: data.refreshExpiresAt,
           user: data.user,
           reportSetting: data.reportSetting ?? null,
         })

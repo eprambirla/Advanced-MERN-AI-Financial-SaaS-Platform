@@ -8,6 +8,8 @@ import {
 const initialState: AuthState = {
   accessToken: null,
   expiresAt: null,
+  refreshToken: null,
+  refreshExpiresAt: null,
   user: null,
   reportSetting: null,
 };
@@ -19,14 +21,18 @@ const authSlice = createSlice({
     setCredentials: (state, action: PayloadAction<SetCredentialsPayload>) => {
       state.accessToken = action.payload.accessToken;
       state.expiresAt = action.payload.expiresAt;
+      state.refreshToken = action.payload.refreshToken;
+      state.refreshExpiresAt = action.payload.refreshExpiresAt;
       state.user = action.payload.user;
       state.reportSetting = action.payload.reportSetting;
     },
     updateCredentials: (state, action: PayloadAction<UpdateCredentialsPayload>) => {
-      const { accessToken, expiresAt, user, reportSetting } = action.payload;
+      const { accessToken, expiresAt, refreshToken, refreshExpiresAt, user, reportSetting } = action.payload;
 
       if (accessToken !== undefined) state.accessToken = accessToken;
       if (expiresAt !== undefined) state.expiresAt = expiresAt;
+      if (refreshToken !== undefined) state.refreshToken = refreshToken;
+      if (refreshExpiresAt !== undefined) state.refreshExpiresAt = refreshExpiresAt;
       if (user !== undefined && state.user && user) {
         state.user = { ...state.user, ...user };
       }
@@ -39,6 +45,8 @@ const authSlice = createSlice({
     logout: (state) => {
       state.accessToken = null;
       state.expiresAt = null;
+      state.refreshToken = null;
+      state.refreshExpiresAt = null;
       state.user = null;
       state.reportSetting = null;
     },

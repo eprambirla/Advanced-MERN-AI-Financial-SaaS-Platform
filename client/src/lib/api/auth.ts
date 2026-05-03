@@ -20,6 +20,27 @@ export interface AuthResponse {
   accessToken: string;
   expiresAt: number;
   refreshToken: string;
+  refreshExpiresAt: number;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    profilePicture: string | null;
+    isEmailVerified?: boolean;
+  };
+  reportSetting?: {
+    userId: string;
+    frequency: string;
+    isEnabled: boolean;
+  } | null;
+}
+
+export interface RefreshResponse {
+  message: string;
+  accessToken: string;
+  expiresAt: number;
+  refreshToken: string;
+  refreshExpiresAt: number;
   user: {
     id: string;
     name: string;
@@ -48,7 +69,7 @@ export async function logout(): Promise<{ message: string }> {
   return response.data;
 }
 
-export async function refreshToken(): Promise<{ accessToken: string }> {
-  const response = await apiClient.post<{ accessToken: string }>("/auth/refresh-token");
+export async function refreshTokenApi(refreshToken: string): Promise<RefreshResponse> {
+  const response = await apiClient.post<RefreshResponse>("/auth/refresh-token", { refreshToken });
   return response.data;
 }

@@ -19,8 +19,10 @@ import {
   getTransactionByIdService,
   scanReceiptService,
   updateTransactionService,
+  getUpcomingRecurringTransactionsService,
+  bulkEditTransactionService,
 } from "../services/transaction.service";
-import { TransactionTypeEnum } from "../models/transaction.model";
+import { TransactionTypeEnum, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from "../enums";
 
 export const createTransactionController = asyncHandler(
   async (req: Request, res: Response) => {
@@ -49,10 +51,19 @@ export const getAllTransactionController = asyncHandler(
         | "RECURRING"
         | "NON_RECURRING"
         | undefined,
+      minAmount: req.query.minAmount ? parseFloat(req.query.minAmount as string) : undefined,
+      maxAmount: req.query.maxAmount ? parseFloat(req.query.maxAmount as string) : undefined,
+      startDate: req.query.startDate as string | undefined,
+      endDate: req.query.endDate as string | undefined,
     };
 
+    const pageSize = Math.min(
+      parseInt(req.query.pageSize as string) || DEFAULT_PAGE_SIZE,
+      MAX_PAGE_SIZE
+    );
+
     const pagination = {
-      pageSize: parseInt(req.query.pageSize as string) || 20,
+      pageSize,
       pageNumber: parseInt(req.query.pageNumber as string) || 1,
     };
 
@@ -187,5 +198,40 @@ export const exportTransactionsController = asyncHandler(
     );
 
     return res.status(HTTPSTATUS.OK).send(result.csvContent);
+  }
+);
+
+export const upcomingRecurringController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const user = req.user as any;
+    const userId = user?._id || user?.id;
+
+    const result = await getUpcomingRecurringTransactionsService(userId);
+
+    return res.status(HTTPSTATUS.OK).json({
+      message: "Upcoming recurring transactions fetched successfully",
+      data: result,
+    });
+  }
+);
+
+export const bulkEditTransactionController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const user = req.user as any;
+    const userId = user?._id || user?.id;
+
+    const { transactionIds, updates } = req.body;
+
+    if (!transactionIds || !Array.isArray(transactionIds) || transactionIds.length === 0) {
+      return res.status(HTTPSTATUS.BAD_REQUEST).json({
+        message: "Transaction IDs are required",
+      });
+    }
+
+    const result = await bulkEditTransactionService(userId, transactionIds, updates);
+
+    return res.status(HTTPSTATUS.OK).json({
+      ...result,
+    });
   }
 );

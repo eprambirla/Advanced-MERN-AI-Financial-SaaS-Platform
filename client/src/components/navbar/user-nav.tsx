@@ -15,7 +15,8 @@ import {
         DropdownMenuTrigger,
   } from "../ui/dropdown-menu"
   import { cn } from "@/lib/utils"
-  
+  import { useOptimizedImage } from "@/hooks/use-optimized-image"
+
 export function UserNav({
   userName,
   profilePicture,
@@ -27,6 +28,15 @@ export function UserNav({
   onLogout: () => void;
   showName?: boolean;
 }) {
+    const optimizedImage = useOptimizedImage(profilePicture, {
+      width: showName ? 32 : 40,
+      height: showName ? 32 : 40,
+      quality: "auto:best",
+      format: "webp",
+      crop: "fill",
+      gravity: "face",
+    });
+
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -39,7 +49,7 @@ export function UserNav({
         >
           <Avatar className={cn("h-10 w-10 cursor-pointer", showName && "h-8 w-8")}>
             <AvatarImage
-              src={profilePicture || ""}
+              src={optimizedImage || ""}
               className="cursor-pointer"
             />
             <AvatarFallback className="bg-primary text-primary-foreground">
@@ -62,11 +72,10 @@ export function UserNav({
       >
         <DropdownMenuLabel className="flex flex-col items-start gap-1">
           <span className="font-semibold text-foreground">{userName}</span>
-            <span className="text-xs text-muted-foreground font-light">Free Trial (2 days left)</span>
-           </DropdownMenuLabel>
+            </DropdownMenuLabel>
            <DropdownMenuSeparator className="bg-border" />
            <DropdownMenuGroup>
-          <DropdownMenuItem 
+          <DropdownMenuItem
             className="hover:bg-accent cursor-pointer"
             onClick={onLogout}
           >

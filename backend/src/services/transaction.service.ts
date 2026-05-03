@@ -54,13 +54,17 @@ export const getAllTransactionService = async (
     keyword?: string;
     type?: keyof typeof TransactionTypeEnum;
     recurringStatus?: "RECURRING" | "NON_RECURRING";
+    minAmount?: number;
+    maxAmount?: number;
+    startDate?: string;
+    endDate?: string;
   },
   pagination: {
     pageSize: number;
     pageNumber: number;
   }
 ) => {
-  const { keyword, type, recurringStatus } = filters;
+  const { keyword, type, recurringStatus, minAmount, maxAmount, startDate, endDate } = filters;
 
   const filterConditions: Record<string, any> = {
     userId,
@@ -83,6 +87,18 @@ export const getAllTransactionService = async (
     } else if (recurringStatus === "NON_RECURRING") {
       filterConditions.isRecurring = false;
     }
+  }
+
+  if (minAmount !== undefined || maxAmount !== undefined) {
+    filterConditions.amount = {};
+    if (minAmount !== undefined) filterConditions.amount.$gte = minAmount;
+    if (maxAmount !== undefined) filterConditions.amount.$lte = maxAmount;
+  }
+
+  if (startDate || endDate) {
+    filterConditions.date = {};
+    if (startDate) filterConditions.date.$gte = new Date(startDate);
+    if (endDate) filterConditions.date.$lte = new Date(endDate);
   }
 
   const { pageSize, pageNumber } = pagination;
@@ -417,5 +433,70 @@ export const exportTransactionsService = async (
   return {
     csvContent,
     count: transactions.length,
+  };
+};
+
+export const getUpcomingRecurringTransactionsService = async (
+  userId: string,
+  daysAhead: number = 30
+) => {
+  const now = new Date();
+  const futureDate = new Date(now);
+  futureDate.setDate(futureDate.getDate() + daysAhead);
+
+  const recurringTransactions = await TransactionModel.find({
+    userId,
+    isRecurring: true,
+    nextRecurringDate: {
+      $gte: now,
+      $lte: futureDate,
+    },
+  })
+    .sort({ nextRecurringDate: 1 })
+    .lean();
+
+  return recurringTransactions.map((t: any) => ({
+    ...t,
+    id: t._id.toString(),
+    _id: undefined,
+  }));
+};
+
+export const bulkEditTransactionService = async (
+  userId: string,
+  transactionIds: string[],
+  updates: {
+    category?: string;
+    paymentMethod?: string;
+    type?: keyof typeof TransactionTypeEnum;
+    isRecurring?: boolean;
+    recurringInterval?: string;
+    description?: string;
+  }
+) => {
+  const filter: Record<string, any> = {
+    _id: { $in: transactionIds },
+    userId,
+  };
+
+  const updateFields: Record<string, any> = {};
+  if (updates.category) updateFields.category = updates.category;
+  if (updates.paymentMethod) updateFields.paymentMethod = updates.paymentMethod;
+  if (updates.type) updateFields.type = updates.type;
+  if (updates.isRecurring !== undefined) updateFields.isRecurring = updates.isRecurring;
+  if (updates.recurringInterval) updateFields.recurringInterval = updates.recurringInterval;
+  if (updates.description) updateFields.description = updates.description;
+
+  if (Object.keys(updateFields).length === 0) {
+    return { updatedCount: 0, message: "No valid fields to update" };
+  }
+
+  const result = await TransactionModel.updateMany(filter, {
+    $set: updateFields,
+  });
+
+  return {
+    updatedCount: result.modifiedCount,
+    message: `${result.modifiedCount} transactions updated`,
   };
 };

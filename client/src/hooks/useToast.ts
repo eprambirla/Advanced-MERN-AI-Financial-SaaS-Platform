@@ -13,10 +13,16 @@ interface ToastOptions {
   error?: string | ((error: ApiError) => string);
 }
 
+interface ToastConfig {
+  duration?: number;
+  important?: boolean;
+}
+
 export const useToast = () => {
   const promise = <T>(
     promise: Promise<T>,
-    options: ToastOptions
+    options: ToastOptions,
+    config?: ToastConfig
   ) => {
     return sonnerToast.promise(promise, {
       loading: options.loading || "Loading...",
@@ -27,23 +33,28 @@ export const useToast = () => {
         }
         return options.error || error?.message || "Something went wrong";
       },
+      duration: config?.important ? 10000 : config?.duration,
     });
   };
 
-  const success = (message: string) => {
-    sonnerToast.success(message);
+  const success = (message: string, config?: ToastConfig) => {
+    sonnerToast.success(message, { duration: config?.duration });
   };
 
-  const error = (message: string) => {
-    sonnerToast.error(message);
+  const error = (message: string, config?: ToastConfig) => {
+    sonnerToast.error(message, {
+      duration: config?.important ? 10000 : config?.duration,
+    });
   };
 
-  const info = (message: string) => {
-    sonnerToast.info(message);
+  const info = (message: string, config?: ToastConfig) => {
+    sonnerToast.info(message, { duration: config?.duration });
   };
 
-  const warning = (message: string) => {
-    sonnerToast.warning(message);
+  const warning = (message: string, config?: ToastConfig) => {
+    sonnerToast.warning(message, {
+      duration: config?.important ? 10000 : config?.duration,
+    });
   };
 
   return {

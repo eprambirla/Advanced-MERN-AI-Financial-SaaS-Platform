@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 .env
+.env.local
+.env.production
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -22,3 +25,20 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Build output
+client/dist
+backend/dist
+backend/build
+
+# Coverage
+coverage
+.nyc_output
+
+# Temporary files
+*.tmp
+*.temp

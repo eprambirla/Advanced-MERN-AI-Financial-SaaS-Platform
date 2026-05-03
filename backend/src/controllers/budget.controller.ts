@@ -35,6 +35,40 @@ const calculateBudgetSpent = async (
   return result[0]?.total || 0;
 };
 
+const calculateRolloverAmount = async (
+  userId: string,
+  budgetCategory: string,
+  period: string,
+  startOfPeriod: Date
+): Promise<number> => {
+  if (period !== "MONTHLY") return 0;
+
+  const prevMonthStart = new Date(startOfPeriod);
+  prevMonthStart.setMonth(prevMonthStart.getMonth() - 1);
+  const prevMonthEnd = new Date(startOfPeriod);
+  prevMonthEnd.setDate(0);
+
+  const result = await TransactionModel.aggregate([
+    {
+      $match: {
+        userId,
+        category: budgetCategory,
+        type: "EXPENSE",
+        date: { $gte: prevMonthStart, $lte: prevMonthEnd },
+        status: "COMPLETED",
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        total: { $sum: "$amount" },
+      },
+    },
+  ]);
+
+  return Math.max(0, result[0]?.total || 0);
+};
+
 const getStartOfPeriod = (period: string): Date => {
   const now = new Date();
   switch (period) {
@@ -59,7 +93,7 @@ export const createBudget = asyncHandler(
       throw new BadRequestException(parsed.error.errors[0].message);
     }
 
-    const { category, amount, period, startDate, alertThreshold } = parsed.data;
+    const { category, amount, period, startDate, alertThreshold, rolloverEnabled } = parsed.data;
     const user = req.user as any;
     const userId = user?._id || user?.id;
 
@@ -87,6 +121,8 @@ export const createBudget = asyncHandler(
       period: period || BudgetPeriodEnum.MONTHLY,
       startDate: startDate ? new Date(startDate) : new Date(),
       alertThreshold: alertThreshold || 80,
+      rolloverEnabled: rolloverEnabled || false,
+      rolloverAmount: 0,
     });
 
     return res.status(HTTPSTATUS.CREATED).json({
@@ -116,13 +152,30 @@ export const getBudgets = asyncHandler(
           budget.period,
           startOfPeriod
         );
+
+        let rolloverAmount = 0;
+        let effectiveBudget = budget.amount;
+
+        if (budget.rolloverEnabled) {
+          const prevSpent = await calculateRolloverAmount(
+            userId,
+            budget.category,
+            budget.period,
+            startOfPeriod
+          );
+          rolloverAmount = Math.max(0, budget.amount - prevSpent);
+          effectiveBudget = budget.amount + rolloverAmount * 0.5;
+        }
+
         return {
           ...budget.toObject(),
           spent,
-          remaining: budget.amount - spent,
-          percentage: budget.amount > 0 ? Math.min((spent / budget.amount) * 100, 100) : 0,
-          isOverBudget: spent > budget.amount,
-          isNearLimit: spent >= budget.amount * (budget.alertThreshold / 100),
+          rolloverAmount,
+          effectiveBudget,
+          remaining: effectiveBudget - spent,
+          percentage: effectiveBudget > 0 ? Math.min((spent / effectiveBudget) * 100, 100) : 0,
+          isOverBudget: spent > effectiveBudget,
+          isNearLimit: spent >= effectiveBudget * (budget.alertThreshold / 100),
         };
       })
     );
@@ -163,15 +216,31 @@ export const getBudgetById = asyncHandler(
       startOfPeriod
     );
 
+    let rolloverAmount = 0;
+    let effectiveBudget = budget.amount;
+
+    if (budget.rolloverEnabled) {
+      const prevSpent = await calculateRolloverAmount(
+        userId,
+        budget.category,
+        budget.period,
+        startOfPeriod
+      );
+      rolloverAmount = Math.max(0, budget.amount - prevSpent);
+      effectiveBudget = budget.amount + rolloverAmount * 0.5;
+    }
+
     return res.status(HTTPSTATUS.OK).json({
       success: true,
       data: {
         ...budget.toObject(),
         spent,
-        remaining: budget.amount - spent,
-        percentage: budget.amount > 0 ? Math.min((spent / budget.amount) * 100, 100) : 0,
-        isOverBudget: spent > budget.amount,
-        isNearLimit: spent >= budget.amount * (budget.alertThreshold / 100),
+        rolloverAmount,
+        effectiveBudget,
+        remaining: effectiveBudget - spent,
+        percentage: effectiveBudget > 0 ? Math.min((spent / effectiveBudget) * 100, 100) : 0,
+        isOverBudget: spent > effectiveBudget,
+        isNearLimit: spent >= effectiveBudget * (budget.alertThreshold / 100),
       },
     });
   }

@@ -6,6 +6,7 @@ export const createBudgetSchema = z.object({
   period: z.enum(["WEEKLY", "MONTHLY", "YEARLY"]).default("MONTHLY"),
   startDate: z.coerce.date().optional(),
   alertThreshold: z.number().min(0).max(100).default(80),
+  rolloverEnabled: z.boolean().optional().default(false),
 });
 
 export const updateBudgetSchema = z.object({
@@ -14,6 +15,7 @@ export const updateBudgetSchema = z.object({
   period: z.enum(["WEEKLY", "MONTHLY", "YEARLY"]).optional(),
   startDate: z.coerce.date().optional(),
   alertThreshold: z.number().min(0).max(100).optional(),
+  rolloverEnabled: z.boolean().optional(),
 });
 
 export type CreateBudgetInput = z.infer<typeof createBudgetSchema>;

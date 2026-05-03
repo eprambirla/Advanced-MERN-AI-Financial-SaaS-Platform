@@ -8,6 +8,10 @@ export interface UserDocument extends Document {
   profilePicture: string | null;
   resetPasswordToken?: string;
   resetPasswordExpires?: Date;
+  refreshToken?: string;
+  isEmailVerified: boolean;
+  emailVerificationToken?: string;
+  emailVerificationExpires?: Date;
   createdAt: Date;
   updatedAt: Date;
   comparePassword: (password: string) => Promise<boolean>;
@@ -42,6 +46,22 @@ const userSchema = new Schema<UserDocument>(
       default: null,
     },
     resetPasswordExpires: {
+      type: Date,
+      default: null,
+    },
+    refreshToken: {
+      type: String,
+      default: null,
+    },
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+    },
+    emailVerificationToken: {
+      type: String,
+      default: null,
+    },
+    emailVerificationExpires: {
       type: Date,
       default: null,
     },

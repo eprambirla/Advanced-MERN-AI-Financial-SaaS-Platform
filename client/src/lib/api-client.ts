@@ -75,20 +75,21 @@ apiClient.interceptors.response.use(
         if (refreshToken) {
           const res = await axios.post(
             `${BASE_URL}/auth/refresh-token`,
-            {},
+            { refreshToken },
             { withCredentials: true }
           );
 
-          const { accessToken } = res.data;
-          localStorage.setItem("accessToken", accessToken);
+          const { accessToken: newAccessToken, refreshToken: newRefreshToken } = res.data;
+          localStorage.setItem("accessToken", newAccessToken);
+          localStorage.setItem("refreshToken", newRefreshToken);
 
-          originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
           return apiClient(originalRequest);
         }
       } catch (refreshError) {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
-        window.location.href = "/sign-in";
+        window.location.href = "/";
         toast.error("Session expired. Please login again.");
         return Promise.reject(refreshError);
       }

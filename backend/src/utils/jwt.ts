@@ -8,6 +8,10 @@ export type AccessTokenPayload = {
   userId: string;
 };
 
+export type RefreshTokenPayload = {
+  userId: string;
+};
+
 type SignOptsAndSecret = SignOptions & {
   secret: string;
   expiresIn?: TimeString | number;
@@ -20,6 +24,11 @@ const defaults: SignOptions = {
 const accessTokenSignOptions: SignOptsAndSecret = {
   expiresIn: Env.JWT_EXPIRES_IN as TimeString,
   secret: Env.JWT_SECRET,
+};
+
+const refreshTokenSignOptions: SignOptsAndSecret = {
+  expiresIn: Env.JWT_REFRESH_EXPIRES_IN as TimeString,
+  secret: Env.JWT_REFRESH_SECRET,
 };
 
 export const signJwtToken = (
@@ -43,4 +52,28 @@ export const signJwtToken = (
     token,
     expiresAt,
   };
+};
+
+export const signRefreshToken = (payload: RefreshTokenPayload) => {
+  const { secret, ...opts } = refreshTokenSignOptions;
+
+  const token = jwt.sign(payload, secret, {
+    ...defaults,
+    ...opts,
+  });
+
+  const expiresAt = (jwt.decode(token) as JwtPayload)?.exp! * 1000;
+
+  return { token, expiresAt };
+};
+
+export const verifyRefreshToken = (token: string) => {
+  try {
+    const decoded = jwt.verify(token, Env.JWT_REFRESH_SECRET, {
+      audience: ["user"],
+    }) as RefreshTokenPayload;
+    return decoded;
+  } catch {
+    return null;
+  }
 };

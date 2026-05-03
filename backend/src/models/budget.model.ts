@@ -13,6 +13,8 @@ export interface BudgetDocument extends Document {
   period: keyof typeof BudgetPeriodEnum;
   startDate: Date;
   alertThreshold: number;
+  rolloverEnabled: boolean;
+  rolloverAmount: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -44,6 +46,14 @@ const budgetSchema = new Schema<BudgetDocument>(
     alertThreshold: {
       type: Number,
       default: 80,
+    },
+    rolloverEnabled: {
+      type: Boolean,
+      default: false,
+    },
+    rolloverAmount: {
+      type: Number,
+      default: 0,
     },
   },
   {
